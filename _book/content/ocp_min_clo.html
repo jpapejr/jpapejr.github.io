@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Example ClusterLogging and LogForwarding APIs · GitBook</title>
+        <title>Example ClusterLogging and LogForwarding APIs · I code and I kube things</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -17,7 +17,31 @@
     
             
                 
-                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-prism/prism-tomorrow.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-collapsible-chapters/collapsible-chapters.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-hints/plugin-hints.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-back-to-top-button/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fancybox/jquery.fancybox.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fancybox/jquery.fancybox-buttons.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-web-header/plugin.css">
                 
             
                 
@@ -57,6 +81,8 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
+    <link rel="next" href="istio_danglers.html" />
+    
     
     <link rel="prev" href="ocp_templates.html" />
     
@@ -85,6 +111,8 @@
 
     
         
+        <li class="header">Introduction</li>
+        
         
     
         <li class="chapter " data-level="1.1" data-path="../">
@@ -92,7 +120,9 @@
                 <a href="../">
             
                     
-                    Introduction
+                        <b>1.1.</b>
+                    
+                    What is this?
             
                 </a>
             
@@ -100,24 +130,19 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2" >
-            
-                <span>
-            
-                    
-                    Containers
-            
-                </span>
-            
 
-            
-            <ul class="articles">
-                
     
-        <li class="chapter " data-level="1.2.1" data-path="mac_podman.html">
+        
+        <li class="header">Containers</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="mac_podman.html">
             
                 <a href="mac_podman.html">
             
+                    
+                        <b>2.1.</b>
                     
                     Run podman on MacOS
             
@@ -127,10 +152,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.2" data-path="alpine_oc_cli.html">
+        <li class="chapter " data-level="2.2" data-path="alpine_oc_cli.html">
             
                 <a href="alpine_oc_cli.html">
             
+                    
+                        <b>2.2.</b>
                     
                     Run OpenShift CLI on Alpine Linux
             
@@ -141,28 +168,18 @@
         </li>
     
 
-            </ul>
-            
-        </li>
     
-        <li class="chapter " data-level="1.3" >
-            
-                <a target="_blank" href="https://kubernetes.io">
-            
-                    
-                    Kubernetes
-            
-                </a>
-            
-
-            
-            <ul class="articles">
-                
+        
+        <li class="header">Kubernetes</li>
+        
+        
     
-        <li class="chapter " data-level="1.3.1" data-path="cluster_access_via_sa.html">
+        <li class="chapter " data-level="3.1" data-path="cluster_access_via_sa.html">
             
                 <a href="cluster_access_via_sa.html">
             
+                    
+                        <b>3.1.</b>
                     
                     Accessing k8s with a service account
             
@@ -172,10 +189,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.2" data-path="iks_fsck.html">
+        <li class="chapter " data-level="3.2" data-path="iks_fsck.html">
             
                 <a href="iks_fsck.html">
             
+                    
+                        <b>3.2.</b>
                     
                     IKS fsck errors
             
@@ -185,10 +204,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.3" data-path="extract_tokenid.html">
+        <li class="chapter " data-level="3.3" data-path="extract_tokenid.html">
             
                 <a href="extract_tokenid.html">
             
+                    
+                        <b>3.3.</b>
                     
                     Extract token-id from KUBECONFIG
             
@@ -198,10 +219,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.4" data-path="iks_kubelet_errors.html">
+        <li class="chapter " data-level="3.4" data-path="iks_kubelet_errors.html">
             
                 <a href="iks_kubelet_errors.html">
             
+                    
+                        <b>3.4.</b>
                     
                     Debugging IKS kubelet errors
             
@@ -211,10 +234,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.5" data-path="manual_se.html">
+        <li class="chapter " data-level="3.5" data-path="manual_se.html">
             
                 <a href="manual_se.html">
             
+                    
+                        <b>3.5.</b>
                     
                     Manually creating service endpoints
             
@@ -224,12 +249,14 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.6" data-path="priv_mk8s.html">
+        <li class="chapter " data-level="3.6" data-path="priv_mk8s.html">
             
                 <a href="priv_mk8s.html">
             
                     
-                    Run privileged deplyments on microk8s
+                        <b>3.6.</b>
+                    
+                    Run privileged deployments on microk8s
             
                 </a>
             
@@ -237,10 +264,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.7" data-path="sample_ingress.html">
+        <li class="chapter " data-level="3.7" data-path="sample_ingress.html">
             
                 <a href="sample_ingress.html">
             
+                    
+                        <b>3.7.</b>
                     
                     Sample TLS Ingress
             
@@ -250,10 +279,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.8" data-path="show_all.html">
+        <li class="chapter " data-level="3.8" data-path="show_all.html">
             
                 <a href="show_all.html">
             
+                    
+                        <b>3.8.</b>
                     
                     Show everying in a namespace
             
@@ -263,10 +294,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.9" data-path="svc_proxy.html">
+        <li class="chapter " data-level="3.9" data-path="svc_proxy.html">
             
                 <a href="svc_proxy.html">
             
+                    
+                        <b>3.9.</b>
                     
                     Access a service via kube proxy
             
@@ -276,10 +309,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.10" data-path="k3s_taint.html">
+        <li class="chapter " data-level="3.10" data-path="k3s_taint.html">
             
                 <a href="k3s_taint.html">
             
+                    
+                        <b>3.10.</b>
                     
                     Taint k3s masters for no user workloads
             
@@ -290,28 +325,18 @@
         </li>
     
 
-            </ul>
-            
-        </li>
     
-        <li class="chapter " data-level="1.4" >
-            
-                <span>
-            
-                    
-                    OpenShift
-            
-                </span>
-            
-
-            
-            <ul class="articles">
-                
+        
+        <li class="header">OpenShift</li>
+        
+        
     
-        <li class="chapter " data-level="1.4.1" data-path="ocp_router_debug.html">
+        <li class="chapter " data-level="4.1" data-path="ocp_router_debug.html">
             
                 <a href="ocp_router_debug.html">
             
+                    
+                        <b>4.1.</b>
                     
                     Debugging the OpenShift 4.x Router
             
@@ -321,10 +346,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="ocp_templates.html">
+        <li class="chapter " data-level="4.2" data-path="ocp_templates.html">
             
                 <a href="ocp_templates.html">
             
+                    
+                        <b>4.2.</b>
                     
                     Managing Templates
             
@@ -334,10 +361,12 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.3" data-path="ocp_min_clo.html">
+        <li class="chapter active" data-level="4.3" data-path="ocp_min_clo.html">
             
                 <a href="ocp_min_clo.html">
             
+                    
+                        <b>4.3.</b>
                     
                     Example ClusterLogging and LogForwarding APIs
             
@@ -348,7 +377,69 @@
         </li>
     
 
-            </ul>
+    
+        
+        <li class="header">Istio</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="istio_danglers.html">
+            
+                <a href="istio_danglers.html">
+            
+                    
+                        <b>5.1.</b>
+                    
+                    Cleaning up dangling webhooks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="ibmcloud_managed_istio_update.html">
+            
+                <a href="ibmcloud_managed_istio_update.html">
+            
+                    
+                        <b>5.2.</b>
+                    
+                    IBM Cloud Managed Istio upgrade test script
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="manual_istio_cleanup.html">
+            
+                <a href="manual_istio_cleanup.html">
+            
+                    
+                        <b>5.3.</b>
+                    
+                    Manual Istio cleanup
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4" data-path="istio_sidecars.html">
+            
+                <a href="istio_sidecars.html">
+            
+                    
+                        <b>5.4.</b>
+                    
+                    Debugging Istio sidecars
+            
+                </a>
+            
+
             
         </li>
     
@@ -359,10 +450,12 @@
         
         
     
-        <li class="chapter " data-level="2.1" >
+        <li class="chapter " data-level="6.1" >
             
                 <a target="_blank" href="https://gist.github.com/jpapejr">
             
+                    
+                        <b>6.1.</b>
                     
                     Gists
             
@@ -372,10 +465,12 @@
             
         </li>
     
-        <li class="chapter " data-level="2.2" >
+        <li class="chapter " data-level="6.2" >
             
                 <a target="_blank" href="https://github.com/jpapejr?tab=repositories">
             
+                    
+                        <b>6.2.</b>
                     
                     Repos
             
@@ -385,10 +480,12 @@
             
         </li>
     
-        <li class="chapter " data-level="2.3" data-path="../RESOURCES.html">
+        <li class="chapter " data-level="6.3" data-path="../RESOURCES.html">
             
                 <a href="../RESOURCES.html">
             
+                    
+                        <b>6.3.</b>
                     
                     Sample Resources
             
@@ -444,58 +541,58 @@
                                 <section class="normal markdown-section">
                                 
                                 <h2 id="clusterlogging">ClusterLogging</h2>
-<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> logging.openshift.io/v1
-<span class="hljs-attr">kind:</span> ClusterLogging
-<span class="hljs-attr">metadata:</span>
-<span class="hljs-attr">  name:</span> instance
-<span class="hljs-attr">  namespace:</span> openshift-logging
-<span class="hljs-attr">  annotations:</span>
-    clusterlogging.openshift.io/logforwardingtechpreview: enabled
-<span class="hljs-attr">spec:</span>
-<span class="hljs-attr">  managementState:</span> Managed
-<span class="hljs-attr">  logStore:</span>
-<span class="hljs-attr">    type:</span> elasticsearch
-<span class="hljs-attr">    elasticsearch:</span>
-<span class="hljs-attr">      nodeCount:</span> <span class="hljs-number">1</span>
-<span class="hljs-attr">      redundancyPolicy:</span> ZeroRedundancy
-<span class="hljs-attr">      resources:</span>
-<span class="hljs-attr">        limits:</span>
-<span class="hljs-attr">          memory:</span> <span class="hljs-number">768</span>Mi
-<span class="hljs-attr">        requests:</span>
-<span class="hljs-attr">          cpu:</span> <span class="hljs-number">200</span>m
-<span class="hljs-attr">          memory:</span> <span class="hljs-number">768</span>Mi
-<span class="hljs-attr">      storage:</span>
-<span class="hljs-attr">        storageClassName:</span> ibmc-vpc-block-general-purpose
-<span class="hljs-attr">        size:</span> <span class="hljs-number">20</span>G
-<span class="hljs-attr">  visualization:</span>
-<span class="hljs-attr">    type:</span> kibana
-<span class="hljs-attr">    kibana:</span>
-<span class="hljs-attr">      replicas:</span> <span class="hljs-number">0</span>
-<span class="hljs-attr">  curation:</span>
-<span class="hljs-attr">    type:</span> curator
-<span class="hljs-attr">    curator:</span>
-<span class="hljs-attr">      schedule:</span> <span class="hljs-number">30</span> <span class="hljs-number">3</span> * * *
-<span class="hljs-attr">  collection:</span>
-<span class="hljs-attr">    logs:</span>
-<span class="hljs-attr">      type:</span> fluentd
-<span class="hljs-attr">      fluentd:</span> {}
+<pre class="language-"><code class="lang-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> logging.openshift.io/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> ClusterLogging
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> instance
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> openshift<span class="token punctuation">-</span>logging
+  <span class="token key atrule">annotations</span><span class="token punctuation">:</span>
+    <span class="token key atrule">clusterlogging.openshift.io/logforwardingtechpreview</span><span class="token punctuation">:</span> enabled
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">managementState</span><span class="token punctuation">:</span> Managed
+  <span class="token key atrule">logStore</span><span class="token punctuation">:</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> elasticsearch
+    <span class="token key atrule">elasticsearch</span><span class="token punctuation">:</span>
+      <span class="token key atrule">nodeCount</span><span class="token punctuation">:</span> <span class="token number">1</span>
+      <span class="token key atrule">redundancyPolicy</span><span class="token punctuation">:</span> ZeroRedundancy
+      <span class="token key atrule">resources</span><span class="token punctuation">:</span>
+        <span class="token key atrule">limits</span><span class="token punctuation">:</span>
+          <span class="token key atrule">memory</span><span class="token punctuation">:</span> 768Mi
+        <span class="token key atrule">requests</span><span class="token punctuation">:</span>
+          <span class="token key atrule">cpu</span><span class="token punctuation">:</span> 200m
+          <span class="token key atrule">memory</span><span class="token punctuation">:</span> 768Mi
+      <span class="token key atrule">storage</span><span class="token punctuation">:</span>
+        <span class="token key atrule">storageClassName</span><span class="token punctuation">:</span> ibmc<span class="token punctuation">-</span>vpc<span class="token punctuation">-</span>block<span class="token punctuation">-</span>general<span class="token punctuation">-</span>purpose
+        <span class="token key atrule">size</span><span class="token punctuation">:</span> 20G
+  <span class="token key atrule">visualization</span><span class="token punctuation">:</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> kibana
+    <span class="token key atrule">kibana</span><span class="token punctuation">:</span>
+      <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">0</span>
+  <span class="token key atrule">curation</span><span class="token punctuation">:</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> curator
+    <span class="token key atrule">curator</span><span class="token punctuation">:</span>
+      <span class="token key atrule">schedule</span><span class="token punctuation">:</span> 30 3 * * *
+  <span class="token key atrule">collection</span><span class="token punctuation">:</span>
+    <span class="token key atrule">logs</span><span class="token punctuation">:</span>
+      <span class="token key atrule">type</span><span class="token punctuation">:</span> fluentd
+      <span class="token key atrule">fluentd</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
 </code></pre>
 <h2 id="logforward-api">LogForward API</h2>
-<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> logging.openshift.io/v1alpha1
-<span class="hljs-attr">kind:</span> LogForwarding
-<span class="hljs-attr">metadata:</span>
-<span class="hljs-attr">  name:</span> instance
-<span class="hljs-attr">  namespace:</span> openshift-logging
-<span class="hljs-attr">spec:</span>
-<span class="hljs-attr">  outputs:</span>
-<span class="hljs-attr">    - endpoint:</span> <span class="hljs-string">&apos;host:port&apos;</span>
-<span class="hljs-attr">      name:</span> insecureforward
-<span class="hljs-attr">      type:</span> forward
-<span class="hljs-attr">  pipelines:</span>
-<span class="hljs-attr">    - inputSource:</span> logs.app
-<span class="hljs-attr">      name:</span> container-logs
-<span class="hljs-attr">      outputRefs:</span>
-<span class="hljs-bullet">        -</span> insecureforward
+<pre class="language-"><code class="lang-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> logging.openshift.io/v1alpha1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> LogForwarding
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> instance
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> openshift<span class="token punctuation">-</span>logging
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">outputs</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> <span class="token key atrule">endpoint</span><span class="token punctuation">:</span> <span class="token string">&apos;host:port&apos;</span>
+      <span class="token key atrule">name</span><span class="token punctuation">:</span> insecureforward
+      <span class="token key atrule">type</span><span class="token punctuation">:</span> forward
+  <span class="token key atrule">pipelines</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> <span class="token key atrule">inputSource</span><span class="token punctuation">:</span> logs.app
+      <span class="token key atrule">name</span><span class="token punctuation">:</span> container<span class="token punctuation">-</span>logs
+      <span class="token key atrule">outputRefs</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> insecureforward
 </code></pre>
 
                                 
@@ -524,10 +621,14 @@
 
             
                 
-                <a href="ocp_templates.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Managing Templates">
+                <a href="ocp_templates.html" class="navigation navigation-prev " aria-label="Previous page: Managing Templates">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
+                
+                <a href="istio_danglers.html" class="navigation navigation-next " aria-label="Next page: Cleaning up dangling webhooks">
+                    <i class="fa fa-angle-right"></i>
+                </a>
                 
             
         
@@ -536,7 +637,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Example ClusterLogging and LogForwarding APIs","level":"1.4.3","depth":2,"next":{"title":"Gists","level":"2.1","depth":1,"url":"https://gist.github.com/jpapejr","ref":"https://gist.github.com/jpapejr","articles":[]},"previous":{"title":"Managing Templates","level":"1.4.2","depth":2,"path":"content/ocp_templates.md","ref":"content/ocp_templates.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"content/ocp_min_clo.md","mtime":"2020-12-02T20:55:35.863Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-02T21:06:23.121Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Example ClusterLogging and LogForwarding APIs","level":"4.3","depth":1,"next":{"title":"Cleaning up dangling webhooks","level":"5.1","depth":1,"path":"content/istio_danglers.md","ref":"content/istio_danglers.md","articles":[]},"previous":{"title":"Managing Templates","level":"4.2","depth":1,"path":"content/ocp_templates.md","ref":"content/ocp_templates.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header","livereload"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"livereload":{},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/ocp_min_clo.md","mtime":"2020-12-02T20:55:35.863Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-02T22:01:27.831Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -544,6 +645,42 @@
         
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-collapsible-chapters/collapsible-chapters.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-copy-code-button/toggle.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-back-to-top-button/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fancybox/jquery.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fancybox/jquery.mousewheel.pack.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fancybox/jquery.fancybox.pack.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fancybox/jquery.fancybox-buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fancybox/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-web-header/plugin.js"></script>
+        
     
         
         <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>

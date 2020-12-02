@@ -1,0 +1,31 @@
+{
+    "root": "/",
+    "title": "I code and I kube things",
+    "pluginsConfig": {
+      "theme-default": {
+        "showLevel": true
+      },
+      "fancybox": {
+        "openEffect": "elastic",
+        "closeEffect": "elastic"
+      },
+      "prism": {
+        "css": [
+          "prismjs/themes/prism-tomorrow.css"
+        ]
+      },
+      "webheader": {
+        "headerTitle" : "I code and I kube things"
+      }
+    },
+    "plugins": [
+      "prism", "-highlight",
+      "collapsible-chapters",
+      "hints",
+      "copy-code-button",
+      "back-to-top-button",
+      "fancybox",
+      "web-header"
+    ],
+    "gitbook": "3.2.3"
+  }
