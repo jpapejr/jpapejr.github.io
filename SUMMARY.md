@@ -3,6 +3,7 @@
 * [Introduction](README.md)
 * [Containers]()
   * [Run podman on MacOS](content/mac_podman.md)
+  * [Run OpenShift CLI on Alpine Linux](content/alpine_oc_cli.md)
 * [Kubernetes](https://kubernetes.io)
   * [Accessing k8s with a service account](content/cluster_access_via_sa.md)
   * [IKS `fsck` errors](content/iks_fsck.md)
@@ -22,5 +23,6 @@
 ---
 * [Gists](https://gist.github.com/jpapejr)
 * [Repos](https://github.com/jpapejr?tab=repositories)
+* [Sample Resources](RESOURCES.md)
 
 

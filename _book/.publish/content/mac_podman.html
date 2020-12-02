@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Debugging IKS kubelet errors · GitBook</title>
+        <title>Run podman on MacOS · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,6 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="manual_se.html" />
-    
-    
-    <link rel="prev" href="extract_tokenid.html" />
     
 
     </head>
@@ -116,25 +112,12 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.2.1" data-path="mac_podman.html">
+        <li class="chapter active" data-level="1.2.1" data-path="mac_podman.html">
             
                 <a href="mac_podman.html">
             
                     
                     Run podman on MacOS
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.2" data-path="alpine_oc_cli.html">
-            
-                <a href="alpine_oc_cli.html">
-            
-                    
-                    Run OpenShift CLI on Alpine Linux
             
                 </a>
             
@@ -200,7 +183,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.3.4" data-path="iks_kubelet_errors.html">
+        <li class="chapter " data-level="1.3.4" data-path="iks_kubelet_errors.html">
             
                 <a href="iks_kubelet_errors.html">
             
@@ -387,19 +370,6 @@
             
         </li>
     
-        <li class="chapter " data-level="2.3" data-path="../RESOURCES.html">
-            
-                <a href="../RESOURCES.html">
-            
-                    
-                    Sample Resources
-            
-                </a>
-            
-
-            
-        </li>
-    
 
     
 
@@ -430,7 +400,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Debugging IKS kubelet errors</a>
+        <a href=".." >Run podman on MacOS</a>
     </h1>
 </div>
 
@@ -445,28 +415,16 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="troubleshooting-kubelet-errors-on-iks">Troubleshooting kubelet errors on IKS</h1>
-<p>When you see failures referring to the inability to connect to a worker machine on port 10250 when trying to execute <code>kubectl exec</code> or <code>kubectl logs</code> commands, check the following:</p>
-<ul>
-<li>Run <code>(oc|kubectl) logs -n kube-system -l app=vpn --tail 10</code> -- If this fails with an error involving <code>WORKERIP:10250</code>, the vpn tunnel is not working.  </li>
-</ul>
-<p>To Further test the VPN do the following:</p>
-<ul>
-<li>Try deleting the current vpn pod
-<em>2.</em> Run a <code>ibmcloud ks cluster master refresh</code> and wait until the Master Status shows something like Ready (5 minutes ago)</li>
-</ul>
-<blockquote>
-<p>Folks tend to assume if the command finished the refresh has also finished, but that&apos;s not the case.</p>
+                                <blockquote>
+<p>Based on these docs <a href="https://developers.redhat.com/blog/2020/02/12/podman-for-macos-sort-of/" target="_blank">https://developers.redhat.com/blog/2020/02/12/podman-for-macos-sort-of/</a></p>
 </blockquote>
-<ul>
-<li><p>If the vpn pod stayed on the same worker, cordon that worker and delete the vpn pod. If this works, reload the worker.</p>
-</li>
-<li><p>Get list of all calico-node pods in the calico-system namespace and run <code>(oc|kubectl) exec -n calico-system &lt;VPN_POD_NAME&gt; -- date</code>  </p>
-<blockquote>
-<p>If that fails on some pods with an error involving WORKERIP:10250, worker to worker communication is broken and VRF or VLAN spanning are the first things to check.</p>
-</blockquote>
-</li>
-</ul>
+<ol>
+<li>Grab the latest <code>podman-machine</code> from <a href="https://github.com/boot2podman/machine/releases" target="_blank">https://github.com/boot2podman/machine/releases</a></li>
+<li>Provision a new machine <code>$ podman-machine create --virtualbox-boot2podman-url https://github.com/snowjet/boot2podman-fedora-iso/releases/download/d1bb19f/boot2podman-fedora.iso --virtualbox-memory=&quot;4096&quot; --virtualbox-share-folder ~/Downloads:code fedbox</code></li>
+<li>Get <code>podman-remote</code> from <a href="https://github.com/boot2podman/libpod/releases" target="_blank">https://github.com/boot2podman/libpod/releases</a></li>
+<li>Use <code>$(podman-machine env fedbox --varlink)</code> to set up the shell and <code>podman</code> commands as normal. </li>
+</ol>
+<p><strong>Note - VirtualBox is needed for this solution</strong></p>
 
                                 
                                 </section>
@@ -494,14 +452,6 @@
 
             
                 
-                <a href="extract_tokenid.html" class="navigation navigation-prev " aria-label="Previous page: Extract token-id from KUBECONFIG">
-                    <i class="fa fa-angle-left"></i>
-                </a>
-                
-                
-                <a href="manual_se.html" class="navigation navigation-next " aria-label="Next page: Manually creating service endpoints">
-                    <i class="fa fa-angle-right"></i>
-                </a>
                 
             
         
@@ -510,7 +460,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Debugging IKS kubelet errors","level":"1.3.4","depth":2,"next":{"title":"Manually creating service endpoints","level":"1.3.5","depth":2,"path":"content/manual_se.md","ref":"content/manual_se.md","articles":[]},"previous":{"title":"Extract token-id from KUBECONFIG","level":"1.3.3","depth":2,"path":"content/extract_tokenid.md","ref":"content/extract_tokenid.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"content/iks_kubelet_errors.md","mtime":"2020-12-02T20:43:54.968Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-02T21:06:23.121Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Run podman on MacOS","level":"1.2.1","depth":2,"next":{"title":"Kubernetes","level":"1.3","depth":1,"url":"https://kubernetes.io","ref":"https://kubernetes.io","articles":[{"title":"Accessing k8s with a service account","level":"1.3.1","depth":2,"path":"content/cluster_access_via_sa.md","ref":"content/cluster_access_via_sa.md","articles":[]},{"title":"IKS fsck errors","level":"1.3.2","depth":2,"path":"content/iks_fsck.md","ref":"content/iks_fsck.md","articles":[]},{"title":"Extract token-id from KUBECONFIG","level":"1.3.3","depth":2,"path":"content/extract_tokenid.md","ref":"content/extract_tokenid.md","articles":[]},{"title":"Debugging IKS kubelet errors","level":"1.3.4","depth":2,"path":"content/iks_kubelet_errors.md","ref":"content/iks_kubelet_errors.md","articles":[]},{"title":"Manually creating service endpoints","level":"1.3.5","depth":2,"path":"content/manual_se.md","ref":"content/manual_se.md","articles":[]},{"title":"Run privileged deplyments on microk8s","level":"1.3.6","depth":2,"path":"content/priv_mk8s.md","ref":"content/priv_mk8s.md","articles":[]},{"title":"Sample TLS Ingress","level":"1.3.7","depth":2,"path":"content/sample_ingress.md","ref":"content/sample_ingress.md","articles":[]},{"title":"Show everying in a namespace","level":"1.3.8","depth":2,"path":"content/show_all.md","ref":"content/show_all.md","articles":[]},{"title":"Access a service via kube proxy","level":"1.3.9","depth":2,"path":"content/svc_proxy.md","ref":"content/svc_proxy.md","articles":[]},{"title":"Taint k3s masters for no user workloads","level":"1.3.10","depth":2,"path":"content/k3s_taint.md","ref":"content/k3s_taint.md","articles":[]}]},"previous":{"title":"Containers","level":"1.2","depth":1,"ref":"","articles":[{"title":"Run podman on MacOS","level":"1.2.1","depth":2,"path":"content/mac_podman.md","ref":"content/mac_podman.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"content/mac_podman.md","mtime":"2020-12-02T20:58:43.232Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-02T20:58:52.623Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -518,10 +468,6 @@
         
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
-    
-        
-        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
-        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>

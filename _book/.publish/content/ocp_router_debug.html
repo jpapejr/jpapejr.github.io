@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Debugging IKS kubelet errors · GitBook</title>
+        <title>Debugging the OpenShift 4.x Router · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,8 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="manual_se.html" />
+    <link rel="next" href="ocp_templates.html" />
     
-    
-    <link rel="prev" href="extract_tokenid.html" />
     
 
     </head>
@@ -129,19 +127,6 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.2" data-path="alpine_oc_cli.html">
-            
-                <a href="alpine_oc_cli.html">
-            
-                    
-                    Run OpenShift CLI on Alpine Linux
-            
-                </a>
-            
-
-            
-        </li>
-    
 
             </ul>
             
@@ -200,7 +185,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.3.4" data-path="iks_kubelet_errors.html">
+        <li class="chapter " data-level="1.3.4" data-path="iks_kubelet_errors.html">
             
                 <a href="iks_kubelet_errors.html">
             
@@ -310,7 +295,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="ocp_router_debug.html">
+        <li class="chapter active" data-level="1.4.1" data-path="ocp_router_debug.html">
             
                 <a href="ocp_router_debug.html">
             
@@ -387,19 +372,6 @@
             
         </li>
     
-        <li class="chapter " data-level="2.3" data-path="../RESOURCES.html">
-            
-                <a href="../RESOURCES.html">
-            
-                    
-                    Sample Resources
-            
-                </a>
-            
-
-            
-        </li>
-    
 
     
 
@@ -430,7 +402,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Debugging IKS kubelet errors</a>
+        <a href=".." >Debugging the OpenShift 4.x Router</a>
     </h1>
 </div>
 
@@ -445,28 +417,19 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="troubleshooting-kubelet-errors-on-iks">Troubleshooting kubelet errors on IKS</h1>
-<p>When you see failures referring to the inability to connect to a worker machine on port 10250 when trying to execute <code>kubectl exec</code> or <code>kubectl logs</code> commands, check the following:</p>
-<ul>
-<li>Run <code>(oc|kubectl) logs -n kube-system -l app=vpn --tail 10</code> -- If this fails with an error involving <code>WORKERIP:10250</code>, the vpn tunnel is not working.  </li>
-</ul>
-<p>To Further test the VPN do the following:</p>
-<ul>
-<li>Try deleting the current vpn pod
-<em>2.</em> Run a <code>ibmcloud ks cluster master refresh</code> and wait until the Master Status shows something like Ready (5 minutes ago)</li>
-</ul>
+                                <h1 id="getting-openshift-router-access-logs">Getting OpenShift router access logs</h1>
+<p><code>oc -n openshift-ingress-operator annotate ingresscontrollers/default ingress.operator.openshift.io/unsupported-logging=debug</code>
+Will cause the ingress operator to inject a syslogd sidecar into the router deployment that will capture the router logs for debugging. Don&apos;t leave this in place, it&apos;s unsupported by RedHat and should only be used for troubleshooting issues. </p>
+<h3 id="---this-info-is-somewhat-old-but-probably-still-valid----">--- This info is somewhat old, but probably still valid ---</h3>
 <blockquote>
-<p>Folks tend to assume if the command finished the refresh has also finished, but that&apos;s not the case.</p>
+<p>This requires some manual gymnastics on Red Hat OpenShift</p>
+<ol>
+<li>Scale down the cluster-version-operator</li>
+<li>Then the ingress-operator per this <a href="https://bugzilla.redhat.com/show_bug.cgi?id=1776392#c6" target="_blank">link</a>.</li>
+<li>Get a syslogd pod/service up like <a href="https://www.me2digital.com/blog/2017/09/syslog-receiver/" target="_blank">this</a>.</li>
+</ol>
+<p>This doesn&apos;t work well on IBM Cloud right now because the CVO runs on the managed master nodes which means end-users cannot scale it down.. The result is that, while you can down the OpenShift Ingress Operator just fine, the CVO will restore it shortly thereafter, wiping out your debugging env vars/config.</p>
 </blockquote>
-<ul>
-<li><p>If the vpn pod stayed on the same worker, cordon that worker and delete the vpn pod. If this works, reload the worker.</p>
-</li>
-<li><p>Get list of all calico-node pods in the calico-system namespace and run <code>(oc|kubectl) exec -n calico-system &lt;VPN_POD_NAME&gt; -- date</code>  </p>
-<blockquote>
-<p>If that fails on some pods with an error involving WORKERIP:10250, worker to worker communication is broken and VRF or VLAN spanning are the first things to check.</p>
-</blockquote>
-</li>
-</ul>
 
                                 
                                 </section>
@@ -494,12 +457,8 @@
 
             
                 
-                <a href="extract_tokenid.html" class="navigation navigation-prev " aria-label="Previous page: Extract token-id from KUBECONFIG">
-                    <i class="fa fa-angle-left"></i>
-                </a>
                 
-                
-                <a href="manual_se.html" class="navigation navigation-next " aria-label="Next page: Manually creating service endpoints">
+                <a href="ocp_templates.html" class="navigation navigation-next navigation-unique" aria-label="Next page: Managing Templates">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -510,7 +469,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Debugging IKS kubelet errors","level":"1.3.4","depth":2,"next":{"title":"Manually creating service endpoints","level":"1.3.5","depth":2,"path":"content/manual_se.md","ref":"content/manual_se.md","articles":[]},"previous":{"title":"Extract token-id from KUBECONFIG","level":"1.3.3","depth":2,"path":"content/extract_tokenid.md","ref":"content/extract_tokenid.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"content/iks_kubelet_errors.md","mtime":"2020-12-02T20:43:54.968Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-02T21:06:23.121Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Debugging the OpenShift 4.x Router","level":"1.4.1","depth":2,"next":{"title":"Managing Templates","level":"1.4.2","depth":2,"path":"content/ocp_templates.md","ref":"content/ocp_templates.md","articles":[]},"previous":{"title":"OpenShift","level":"1.4","depth":1,"ref":"","articles":[{"title":"Debugging the OpenShift 4.x Router","level":"1.4.1","depth":2,"path":"content/ocp_router_debug.md","ref":"content/ocp_router_debug.md","articles":[]},{"title":"Managing Templates","level":"1.4.2","depth":2,"path":"content/ocp_templates.md","ref":"content/ocp_templates.md","articles":[]},{"title":"Example ClusterLogging and LogForwarding APIs","level":"1.4.3","depth":2,"path":"content/ocp_min_clo.md","ref":"content/ocp_min_clo.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"content/ocp_router_debug.md","mtime":"2020-12-02T20:53:49.974Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-02T20:58:52.623Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -518,10 +477,6 @@
         
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
-    
-        
-        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
-        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>

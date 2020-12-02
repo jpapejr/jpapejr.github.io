@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Debugging IKS kubelet errors · GitBook</title>
+        <title>Manually creating service endpoints · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="manual_se.html" />
+    <link rel="next" href="priv_mk8s.html" />
     
     
-    <link rel="prev" href="extract_tokenid.html" />
+    <link rel="prev" href="iks_kubelet_errors.html" />
     
 
     </head>
@@ -129,19 +129,6 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.2" data-path="alpine_oc_cli.html">
-            
-                <a href="alpine_oc_cli.html">
-            
-                    
-                    Run OpenShift CLI on Alpine Linux
-            
-                </a>
-            
-
-            
-        </li>
-    
 
             </ul>
             
@@ -200,7 +187,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.3.4" data-path="iks_kubelet_errors.html">
+        <li class="chapter " data-level="1.3.4" data-path="iks_kubelet_errors.html">
             
                 <a href="iks_kubelet_errors.html">
             
@@ -213,7 +200,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.5" data-path="manual_se.html">
+        <li class="chapter active" data-level="1.3.5" data-path="manual_se.html">
             
                 <a href="manual_se.html">
             
@@ -387,19 +374,6 @@
             
         </li>
     
-        <li class="chapter " data-level="2.3" data-path="../RESOURCES.html">
-            
-                <a href="../RESOURCES.html">
-            
-                    
-                    Sample Resources
-            
-                </a>
-            
-
-            
-        </li>
-    
 
     
 
@@ -430,7 +404,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Debugging IKS kubelet errors</a>
+        <a href=".." >Manually creating service endpoints</a>
     </h1>
 </div>
 
@@ -445,29 +419,30 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="troubleshooting-kubelet-errors-on-iks">Troubleshooting kubelet errors on IKS</h1>
-<p>When you see failures referring to the inability to connect to a worker machine on port 10250 when trying to execute <code>kubectl exec</code> or <code>kubectl logs</code> commands, check the following:</p>
-<ul>
-<li>Run <code>(oc|kubectl) logs -n kube-system -l app=vpn --tail 10</code> -- If this fails with an error involving <code>WORKERIP:10250</code>, the vpn tunnel is not working.  </li>
-</ul>
-<p>To Further test the VPN do the following:</p>
-<ul>
-<li>Try deleting the current vpn pod
-<em>2.</em> Run a <code>ibmcloud ks cluster master refresh</code> and wait until the Master Status shows something like Ready (5 minutes ago)</li>
-</ul>
-<blockquote>
-<p>Folks tend to assume if the command finished the refresh has also finished, but that&apos;s not the case.</p>
-</blockquote>
-<ul>
-<li><p>If the vpn pod stayed on the same worker, cordon that worker and delete the vpn pod. If this works, reload the worker.</p>
-</li>
-<li><p>Get list of all calico-node pods in the calico-system namespace and run <code>(oc|kubectl) exec -n calico-system &lt;VPN_POD_NAME&gt; -- date</code>  </p>
-<blockquote>
-<p>If that fails on some pods with an error involving WORKERIP:10250, worker to worker communication is broken and VRF or VLAN spanning are the first things to check.</p>
-</blockquote>
-</li>
-</ul>
-
+                                <h1 id="creating-manual-service-endpoints">Creating manual service endpoints</h1>
+<p>An example of manually creating endpoints for a service spec. This example allows <code>service B</code> in <code>namespace B</code> to actually have endpoints from other namespaces (i.e. <code>service A</code> in <code>namespace A</code>)</p>
+<pre><code>kind: Service
+apiVersion: v1
+metadata:
+  name: serviceB
+  namespace: namespaceB
+spec:
+  ports:
+  - protocol: TCP
+    port: &lt;serviceB port&gt;
+    targetPort: &lt;serviceA port&gt;
+---
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: serviceB
+  namespace: namespaceB
+subsets:
+  - addresses:
+    - ip: &lt;serviceA clusterIP&gt;
+    ports:
+    - port: &lt;serviceA port&gt;
+</code></pre>
                                 
                                 </section>
                             
@@ -494,12 +469,12 @@
 
             
                 
-                <a href="extract_tokenid.html" class="navigation navigation-prev " aria-label="Previous page: Extract token-id from KUBECONFIG">
+                <a href="iks_kubelet_errors.html" class="navigation navigation-prev " aria-label="Previous page: Debugging IKS kubelet errors">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="manual_se.html" class="navigation navigation-next " aria-label="Next page: Manually creating service endpoints">
+                <a href="priv_mk8s.html" class="navigation navigation-next " aria-label="Next page: Run privileged deplyments on microk8s">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -510,7 +485,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Debugging IKS kubelet errors","level":"1.3.4","depth":2,"next":{"title":"Manually creating service endpoints","level":"1.3.5","depth":2,"path":"content/manual_se.md","ref":"content/manual_se.md","articles":[]},"previous":{"title":"Extract token-id from KUBECONFIG","level":"1.3.3","depth":2,"path":"content/extract_tokenid.md","ref":"content/extract_tokenid.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"content/iks_kubelet_errors.md","mtime":"2020-12-02T20:43:54.968Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-02T21:06:23.121Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Manually creating service endpoints","level":"1.3.5","depth":2,"next":{"title":"Run privileged deplyments on microk8s","level":"1.3.6","depth":2,"path":"content/priv_mk8s.md","ref":"content/priv_mk8s.md","articles":[]},"previous":{"title":"Debugging IKS kubelet errors","level":"1.3.4","depth":2,"path":"content/iks_kubelet_errors.md","ref":"content/iks_kubelet_errors.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"content/manual_se.md","mtime":"2020-12-02T20:46:44.889Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-02T20:58:52.623Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -518,10 +493,6 @@
         
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
-    
-        
-        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
-        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>

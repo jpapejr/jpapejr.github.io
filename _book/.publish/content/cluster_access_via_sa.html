@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Debugging IKS kubelet errors · GitBook</title>
+        <title>Accessing k8s with a service account · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,8 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="manual_se.html" />
+    <link rel="next" href="iks_fsck.html" />
     
-    
-    <link rel="prev" href="extract_tokenid.html" />
     
 
     </head>
@@ -129,19 +127,6 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.2" data-path="alpine_oc_cli.html">
-            
-                <a href="alpine_oc_cli.html">
-            
-                    
-                    Run OpenShift CLI on Alpine Linux
-            
-                </a>
-            
-
-            
-        </li>
-    
 
             </ul>
             
@@ -161,7 +146,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.3.1" data-path="cluster_access_via_sa.html">
+        <li class="chapter active" data-level="1.3.1" data-path="cluster_access_via_sa.html">
             
                 <a href="cluster_access_via_sa.html">
             
@@ -200,7 +185,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.3.4" data-path="iks_kubelet_errors.html">
+        <li class="chapter " data-level="1.3.4" data-path="iks_kubelet_errors.html">
             
                 <a href="iks_kubelet_errors.html">
             
@@ -387,19 +372,6 @@
             
         </li>
     
-        <li class="chapter " data-level="2.3" data-path="../RESOURCES.html">
-            
-                <a href="../RESOURCES.html">
-            
-                    
-                    Sample Resources
-            
-                </a>
-            
-
-            
-        </li>
-    
 
     
 
@@ -430,7 +402,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Debugging IKS kubelet errors</a>
+        <a href=".." >Accessing k8s with a service account</a>
     </h1>
 </div>
 
@@ -445,28 +417,26 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="troubleshooting-kubelet-errors-on-iks">Troubleshooting kubelet errors on IKS</h1>
-<p>When you see failures referring to the inability to connect to a worker machine on port 10250 when trying to execute <code>kubectl exec</code> or <code>kubectl logs</code> commands, check the following:</p>
-<ul>
-<li>Run <code>(oc|kubectl) logs -n kube-system -l app=vpn --tail 10</code> -- If this fails with an error involving <code>WORKERIP:10250</code>, the vpn tunnel is not working.  </li>
-</ul>
-<p>To Further test the VPN do the following:</p>
-<ul>
-<li>Try deleting the current vpn pod
-<em>2.</em> Run a <code>ibmcloud ks cluster master refresh</code> and wait until the Master Status shows something like Ready (5 minutes ago)</li>
-</ul>
-<blockquote>
-<p>Folks tend to assume if the command finished the refresh has also finished, but that&apos;s not the case.</p>
-</blockquote>
-<ul>
-<li><p>If the vpn pod stayed on the same worker, cordon that worker and delete the vpn pod. If this works, reload the worker.</p>
-</li>
-<li><p>Get list of all calico-node pods in the calico-system namespace and run <code>(oc|kubectl) exec -n calico-system &lt;VPN_POD_NAME&gt; -- date</code>  </p>
-<blockquote>
-<p>If that fails on some pods with an error involving WORKERIP:10250, worker to worker communication is broken and VRF or VLAN spanning are the first things to check.</p>
-</blockquote>
-</li>
-</ul>
+                                <h1 id="accessing-a-k8s-cluster-with-a-service-account">Accessing a k8s cluster with a service account</h1>
+<p>This method will allow you to set up a service account and create a context for it using kubectl config commands.</p>
+<h2 id="create-a-service-account-in-your-cluster-any-namespace-works">Create a service account in your cluster (any namespace works)</h2>
+<pre><code>kubectl create sa &lt;username&gt;
+</code></pre><h2 id="get-the-cert-and-token-info-from-the-new-service-account">Get the cert and token info from the new service account</h2>
+<h3 id="certificate">Certificate</h3>
+<pre><code>kubectl get secret $(kubectl get sa jtp -o jsonpath=&apos;{.secrets[].name}&apos;) -o jsonpath=&apos;{.data.ca\.crt}&apos; | base64 -D &gt; &lt;path-to-new-ca-file&gt;
+</code></pre><h3 id="token">Token</h3>
+<pre><code>kubectl get secret $(kubectl get sa jtp -o jsonpath=&apos;{.secrets[].name}&apos;) -o jsonpath=&apos;{.data.token}&apos; | base64 -D
+</code></pre><h2 id="create-a-clusterrolebinding-to-grant-the-permissions-you-want-to-give">Create a clusterrolebinding to grant the permissions you want to give</h2>
+<pre><code>kubectl create clusterrolebinding &lt;clusterrolebinding name&gt; --clusterrole=&lt;cluster-role&gt; --serviceaccount=&lt;service account namespace:service account name&gt;
+</code></pre><h2 id="create-a-new-kube-context">Create a new kube context</h2>
+<h3 id="cluster">cluster</h3>
+<pre><code>kubectl config set-cluster &lt;clustername&gt; --server=&lt;master url from ibmcloud ks cluster-get &lt;clustername&gt;&gt; --certificate-authority=&lt;path to the ca file from step 2&gt;
+</code></pre><h3 id="usercredentials">User/credentials</h3>
+<pre><code>kubectl config set-credentials &lt;username&gt; --token=&lt;token value from step 2b&gt;
+</code></pre><h3 id="context">Context</h3>
+<pre><code>kubectl config set-context &lt;contextname&gt; --cluster=&lt;clustername&gt; --user=&lt;username&gt;
+</code></pre><p>From here you should be able to use normal kubectl commands to switch contexts/namespaces or you can use tools like kubectx and kubens from <a href="https://github.com/ahmetb/kubectx" target="_blank">https://github.com/ahmetb/kubectx</a>.</p>
+<p>This method also allows for non-IAM users to have access to your cluster. (I.e. if you use this method, you don&#x2019;t have to grant any IBM Cloud users any IAM policies against your cluster or the Container service in general because you can create service accounts in-cluster for anyone and distributed the token and cert values to prospective users and they can use that (and standard k8s tooling) to set up their connection to the cluster.) Furthermore, you&#x2019;ll have the ability to restrict their access on the granularity of your choosing with clusterrolebindings (cluster level) and rolebindings (per namespace).</p>
 
                                 
                                 </section>
@@ -494,12 +464,8 @@
 
             
                 
-                <a href="extract_tokenid.html" class="navigation navigation-prev " aria-label="Previous page: Extract token-id from KUBECONFIG">
-                    <i class="fa fa-angle-left"></i>
-                </a>
                 
-                
-                <a href="manual_se.html" class="navigation navigation-next " aria-label="Next page: Manually creating service endpoints">
+                <a href="iks_fsck.html" class="navigation navigation-next navigation-unique" aria-label="Next page: IKS fsck errors">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -510,7 +476,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Debugging IKS kubelet errors","level":"1.3.4","depth":2,"next":{"title":"Manually creating service endpoints","level":"1.3.5","depth":2,"path":"content/manual_se.md","ref":"content/manual_se.md","articles":[]},"previous":{"title":"Extract token-id from KUBECONFIG","level":"1.3.3","depth":2,"path":"content/extract_tokenid.md","ref":"content/extract_tokenid.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"content/iks_kubelet_errors.md","mtime":"2020-12-02T20:43:54.968Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-02T21:06:23.121Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Accessing k8s with a service account","level":"1.3.1","depth":2,"next":{"title":"IKS fsck errors","level":"1.3.2","depth":2,"path":"content/iks_fsck.md","ref":"content/iks_fsck.md","articles":[]},"previous":{"title":"Kubernetes","level":"1.3","depth":1,"url":"https://kubernetes.io","ref":"https://kubernetes.io","articles":[{"title":"Accessing k8s with a service account","level":"1.3.1","depth":2,"path":"content/cluster_access_via_sa.md","ref":"content/cluster_access_via_sa.md","articles":[]},{"title":"IKS fsck errors","level":"1.3.2","depth":2,"path":"content/iks_fsck.md","ref":"content/iks_fsck.md","articles":[]},{"title":"Extract token-id from KUBECONFIG","level":"1.3.3","depth":2,"path":"content/extract_tokenid.md","ref":"content/extract_tokenid.md","articles":[]},{"title":"Debugging IKS kubelet errors","level":"1.3.4","depth":2,"path":"content/iks_kubelet_errors.md","ref":"content/iks_kubelet_errors.md","articles":[]},{"title":"Manually creating service endpoints","level":"1.3.5","depth":2,"path":"content/manual_se.md","ref":"content/manual_se.md","articles":[]},{"title":"Run privileged deplyments on microk8s","level":"1.3.6","depth":2,"path":"content/priv_mk8s.md","ref":"content/priv_mk8s.md","articles":[]},{"title":"Sample TLS Ingress","level":"1.3.7","depth":2,"path":"content/sample_ingress.md","ref":"content/sample_ingress.md","articles":[]},{"title":"Show everying in a namespace","level":"1.3.8","depth":2,"path":"content/show_all.md","ref":"content/show_all.md","articles":[]},{"title":"Access a service via kube proxy","level":"1.3.9","depth":2,"path":"content/svc_proxy.md","ref":"content/svc_proxy.md","articles":[]},{"title":"Taint k3s masters for no user workloads","level":"1.3.10","depth":2,"path":"content/k3s_taint.md","ref":"content/k3s_taint.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"content/cluster_access_via_sa.md","mtime":"2020-12-02T20:44:00.893Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-02T20:58:52.623Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -518,10 +484,6 @@
         
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
-    
-        
-        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
-        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
