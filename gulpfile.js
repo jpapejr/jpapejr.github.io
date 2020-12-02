@@ -7,7 +7,7 @@ const $ = gulpLoadPlugins();
 gulp.task('publish', () => {
   console.log('Publishing to GH Pages');
   return gulp.src('./_book/**/*')
-    .pipe($.ghPages({
+    .pipe(ghPages({
       origin: 'origin',
       branch: 'gh-pages'
     }));
