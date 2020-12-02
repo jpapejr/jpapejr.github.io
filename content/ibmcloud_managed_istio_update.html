@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Manually creating service endpoints · I code and I kube things</title>
+        <title>IBM Cloud Managed Istio upgrade test script · I code and I kube things</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -81,10 +81,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="priv_mk8s.html" />
+    <link rel="next" href="manual_istio_cleanup.html" />
     
     
-    <link rel="prev" href="iks_kubelet_errors.html" />
+    <link rel="prev" href="istio_danglers.html" />
     
 
     </head>
@@ -234,7 +234,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="3.5" data-path="manual_se.html">
+        <li class="chapter " data-level="3.5" data-path="manual_se.html">
             
                 <a href="manual_se.html">
             
@@ -398,7 +398,7 @@
             
         </li>
     
-        <li class="chapter " data-level="5.2" data-path="ibmcloud_managed_istio_update.html">
+        <li class="chapter active" data-level="5.2" data-path="ibmcloud_managed_istio_update.html">
             
                 <a href="ibmcloud_managed_istio_update.html">
             
@@ -525,7 +525,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Manually creating service endpoints</a>
+        <a href=".." >IBM Cloud Managed Istio upgrade test script</a>
     </h1>
 </div>
 
@@ -540,29 +540,77 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="creating-manual-service-endpoints">Creating manual service endpoints</h1>
-<p>An example of manually creating endpoints for a service spec. This example allows <code>service B</code> in <code>namespace B</code> to actually have endpoints from other namespaces (i.e. <code>service A</code> in <code>namespace A</code>)</p>
-<pre class="language-"><code>kind: Service
-apiVersion: v1
-metadata:
-  name: serviceB
-  namespace: namespaceB
-spec:
-  ports:
-  - protocol: TCP
-    port: <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>serviceB</span> <span class="token attr-name">port</span><span class="token punctuation">&gt;</span></span>
-    targetPort: <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>serviceA</span> <span class="token attr-name">port</span><span class="token punctuation">&gt;</span></span>
----
-kind: Endpoints
-apiVersion: v1
-metadata:
-  name: serviceB
-  namespace: namespaceB
-subsets:
-  - addresses:
-    - ip: <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>serviceA</span> <span class="token attr-name">clusterIP</span><span class="token punctuation">&gt;</span></span>
-    ports:
-    - port: <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>serviceA</span> <span class="token attr-name">port</span><span class="token punctuation">&gt;</span></span>
+                                <h1 id="ibm-cloud-managed-istio-upgrade-test-script">IBM Cloud managed Istio upgrade test script</h1>
+<p>This script can be used to [mostly] manage an automated update of managed Istio on IBM Cloud.</p>
+<pre class="language-"><code>export CLUSTER=${1:-&quot;jtp-istio-upgrade&quot;}
+export PRE_UPGRADE_ISTIO=${2:-&quot;1.4.6&quot;}
+export POST_UPGRADE_ISTIO=${3:-&quot;1.5.0&quot;}
+
+echo &quot;Test parameters:&quot;
+echo &quot;----------------&quot;
+echo Cluster:                    $CLUSTER
+echo Istio pre-upgrade version:  $PRE_UPGRADE_ISTIO
+echo Istio post-upgrade version: $POST_UPGRADE_ISTIO
+echo
+echo
+
+read -p &quot;Press enter to continue&quot;
+
+echo &quot;Install Istio $PRE_UPGRADE_ISTIO&quot;
+curl -sL https://istio.io/downloadIstio | ISTIO_VERSION=$PRE_UPGRADE_ISTIO sh -
+cd istio-$PRE_UPGRADE_ISTIO
+echo &quot;Enable Managed Istio in cluster $CLUSTER&quot;
+ibmcloud ks cluster addon enable istio -c $CLUSTER
+echo &quot;Obtaining cluster config&quot;
+$(ibmcloud ks cluster config -c $CLUSTER --export)
+echo &quot;Attempting to label default namespace for Istio sidecar injection&quot;
+kubectl label namespace default istio-injection=enabled
+
+echo &quot;Waiting 300s for Istio control plane to materialize in cluster&quot;
+sleep 300s
+
+kubectl get pods -n istio-system
+
+read -p &quot;Press enter to continue&quot;
+
+echo &quot;Install BookInfo&quot;
+kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+
+sleep 15s
+
+export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath=&apos;{.status.loadBalancer.ingress[0].ip}&apos;)
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath=&apos;{.spec.ports[?(@.name==&quot;http2&quot;)].port}&apos;)
+export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath=&apos;{.spec.ports[?(@.name==&quot;https&quot;)].port}&apos;)
+
+echo &quot;Testing Istio ingress path http://$INGRESS_HOST/productpage&quot;
+for i in {1..15}; do sleep 1; curl -s -o /dev/null -w &quot;%{http_code}\n&quot;  http://$INGRESS_HOST/productpage;done
+
+read -p &quot;Press enter to continue&quot;
+
+cd ..
+echo &quot;Upgrade to Istio $POST_UPGRADE_ISTIO&quot;
+
+curl -sL https://istio.io/downloadIstio | ISTIO_VERSION=$POST_UPGRADE_ISTIO sh -
+cd istio-$POST_UPGRADE_ISTIO
+echo &quot;Upgrading Managed Istio in cluster $CLUSTER&quot;
+ibmcloud ks cluster addon update istio --version $(echo &quot;$POST_UPGRADE_ISTIO&quot; | cut -d&apos;.&apos; -f1-2) -c $CLUSTER #skipping variablized Istio version here because command is specific
+
+echo &quot;Testing Istio ingress path during upgrade operation&quot;
+echo http://$INGRESS_HOST/productpage
+for i in {1..300}; do sleep 1; curl -s -o /dev/null -w &quot;%{http_code}\n&quot;  http://$INGRESS_HOST/productpage;done
+
+read -p &quot;Press enter to continue&quot;
+kubectl get pods -n istio-system
+
+# CLEANUP
+read -p &quot;Clean up?&quot;
+ibmcloud ks cluster addon disable istio -c $CLUSTER -f
+./samples/bookinfo/platform/kube/cleanup.sh
+
+cd ..
+rm -rf istio-$PRE_UPGRADE_ISTIO/
+rm -rf istio-$POST_UPGRADE_ISTIO/
 </code></pre>
                                 
                                 </section>
@@ -590,12 +638,12 @@ subsets:
 
             
                 
-                <a href="iks_kubelet_errors.html" class="navigation navigation-prev " aria-label="Previous page: Debugging IKS kubelet errors">
+                <a href="istio_danglers.html" class="navigation navigation-prev " aria-label="Previous page: Cleaning up dangling webhooks">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="priv_mk8s.html" class="navigation navigation-next " aria-label="Next page: Run privileged deployments on microk8s">
+                <a href="manual_istio_cleanup.html" class="navigation navigation-next " aria-label="Next page: Manual Istio cleanup">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -606,7 +654,7 @@ subsets:
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Manually creating service endpoints","level":"3.5","depth":1,"next":{"title":"Run privileged deployments on microk8s","level":"3.6","depth":1,"path":"content/priv_mk8s.md","ref":"content/priv_mk8s.md","articles":[]},"previous":{"title":"Debugging IKS kubelet errors","level":"3.4","depth":1,"path":"content/iks_kubelet_errors.md","ref":"content/iks_kubelet_errors.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header","livereload"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"livereload":{},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/manual_se.md","mtime":"2020-12-02T20:46:44.889Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-02T22:01:27.831Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"IBM Cloud Managed Istio upgrade test script","level":"5.2","depth":1,"next":{"title":"Manual Istio cleanup","level":"5.3","depth":1,"path":"content/manual_istio_cleanup.md","ref":"content/manual_istio_cleanup.md","articles":[]},"previous":{"title":"Cleaning up dangling webhooks","level":"5.1","depth":1,"path":"content/istio_danglers.md","ref":"content/istio_danglers.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header","livereload"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"livereload":{},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/ibmcloud_managed_istio_update.md","mtime":"2020-12-02T21:45:57.088Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-02T22:01:27.831Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
