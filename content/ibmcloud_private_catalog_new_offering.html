@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Run OpenShift CLI on Alpine Linux · I code and I kube things</title>
+        <title>Add new offerings to a private catalog instance · I code and I kube things</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -81,10 +81,8 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="cluster_access_via_sa.html" />
     
-    
-    <link rel="prev" href="mac_podman.html" />
+    <link rel="prev" href="ibmcloud_force_csi.html" />
     
 
     </head>
@@ -152,7 +150,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="2.2" data-path="alpine_oc_cli.html">
+        <li class="chapter " data-level="2.2" data-path="alpine_oc_cli.html">
             
                 <a href="alpine_oc_cli.html">
             
@@ -465,7 +463,7 @@
             
         </li>
     
-        <li class="chapter " data-level="6.2" data-path="ibmcloud_private_catalog_new_offering.html">
+        <li class="chapter active" data-level="6.2" data-path="ibmcloud_private_catalog_new_offering.html">
             
                 <a href="ibmcloud_private_catalog_new_offering.html">
             
@@ -562,7 +560,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Run OpenShift CLI on Alpine Linux</a>
+        <a href=".." >Add new offerings to a private catalog instance</a>
     </h1>
 </div>
 
@@ -577,11 +575,9 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <p>Get OpenShift CLI</p>
-<p><code>curl -sLO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz &amp;&amp; tar xvfz ./oc.tar.gz &amp;&amp; mv oc /usr/local/bin/oc &amp;&amp; chmod ugo+x /usr/local/bin/oc</code></p>
-<p>then</p>
-<p><code>alias oc=&apos;/lib/ld-musl-x86_64.so.1 --library-path /lib /usr/local/bin/oc&apos;</code></p>
-<p>This is all needed because Red Hat isn&apos;t building static binaries for the CLI. </p>
+                                <p>To add a new offering to an existing private catalog on IBM Cloud, issue the following <code>curl</code> command:</p>
+<p><code>curl -s -g -H &quot;Authorization: Bearer $(ibmcloud iam oauth-tokens | cut -d&apos; &apos; -f5)&quot; -location -request POST &quot;https://cm.globalcatalog.cloud.ibm.com/api/v1-beta/catalogs/<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>CATALOG</span> <span class="token attr-name">ID</span><span class="token punctuation">&gt;</span></span>/offerings&quot; -H &apos;Content-Type: application/json&apos; --data &quot;@offering.json&quot; -vvv</code></p>
+<p>After a successful POST request, you&apos;ll have a new offering in the catalog to use!</p>
 
                                 
                                 </section>
@@ -609,14 +605,10 @@
 
             
                 
-                <a href="mac_podman.html" class="navigation navigation-prev " aria-label="Previous page: Run podman on MacOS">
+                <a href="ibmcloud_force_csi.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Force VPC default storage class off">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
-                
-                <a href="cluster_access_via_sa.html" class="navigation navigation-next " aria-label="Next page: Accessing k8s with a service account">
-                    <i class="fa fa-angle-right"></i>
-                </a>
                 
             
         
@@ -625,7 +617,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Run OpenShift CLI on Alpine Linux","level":"2.2","depth":1,"next":{"title":"Accessing k8s with a service account","level":"3.1","depth":1,"path":"content/cluster_access_via_sa.md","ref":"content/cluster_access_via_sa.md","articles":[]},"previous":{"title":"Run podman on MacOS","level":"2.1","depth":1,"path":"content/mac_podman.md","ref":"content/mac_podman.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header","livereload"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"livereload":{},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/alpine_oc_cli.md","mtime":"2020-12-03T19:02:25.619Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-08T21:53:51.669Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Add new offerings to a private catalog instance","level":"6.2","depth":1,"next":{"title":"Gists","level":"7.1","depth":1,"url":"https://gist.github.com/jpapejr","ref":"https://gist.github.com/jpapejr","articles":[]},"previous":{"title":"Force VPC default storage class off","level":"6.1","depth":1,"path":"content/ibmcloud_force_csi.md","ref":"content/ibmcloud_force_csi.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header","livereload"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"livereload":{},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/ibmcloud_private_catalog_new_offering.md","mtime":"2020-12-08T21:52:59.578Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-08T21:53:51.669Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
