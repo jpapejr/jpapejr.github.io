@@ -38,6 +38,7 @@
 ## IBM Cloud
 
   * [Force VPC default storage class off](content/ibmcloud_force_csi.md)
+  * [Add new offerings to a private catalog instance](content/ibmcloud_private_catalog_new_offering.md)
 
 ---
 
