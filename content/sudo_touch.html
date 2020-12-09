@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Debugging Istio sidecars · I code and I kube things</title>
+        <title>Use Touch ID for sudo · I code and I kube things</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -81,10 +81,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="ibmcloud_force_csi.html" />
+    <link rel="next" href="cert_extract.html" />
     
     
-    <link rel="prev" href="manual_istio_cleanup.html" />
+    <link rel="prev" href="sshfs_mount.html" />
     
 
     </head>
@@ -518,7 +518,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="5.4" data-path="istio_sidecars.html">
+        <li class="chapter " data-level="5.4" data-path="istio_sidecars.html">
             
                 <a href="istio_sidecars.html">
             
@@ -734,7 +734,7 @@
             
         </li>
     
-        <li class="chapter " data-level="8.3" data-path="sudo_touch.html">
+        <li class="chapter active" data-level="8.3" data-path="sudo_touch.html">
             
                 <a href="sudo_touch.html">
             
@@ -920,7 +920,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Debugging Istio sidecars</a>
+        <a href=".." >Use Touch ID for sudo</a>
     </h1>
 </div>
 
@@ -935,22 +935,12 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="troubleshooting-envoy-sidecars">Troubleshooting envoy sidecars</h1>
-<h2 id="to-troubleshoot">To troubleshoot</h2>
-<pre class="language-"><code>kubectl logs <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>pod</span><span class="token punctuation">&gt;</span></span> -c istio-proxy
-</code></pre><p>Look for warnings/errors in the envoy proxy logs.</p>
-<h2 id="see-where-the-communication-is-breaking">See where the communication is breaking</h2>
-<p>Make sure the proxy can talk to the workload</p>
-<pre class="language-"><code>kubectl exec <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>b-pod</span><span class="token punctuation">&gt;</span></span> -c istio-proxy -- curl -v localhost:<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>port</span><span class="token punctuation">&gt;</span></span>/dosomecrazystuff
-</code></pre><p>Make sure the proxy can talk to other proxy sidecars</p>
-<pre class="language-"><code>Non-TLS
+                                <p>With some minor modifications, you can tell your Mac to use TouchID as a form of authentication for <code>sudo</code>.</p>
+<p>If you edit <code>/etc/pam.d/sudo</code> and add the following line to the top:</p>
+<pre class="language-"><code>auth sufficient pam_tid.so
+</code></pre><p>You can now use your fingerprint to <code>sudo</code>!</p>
+<p>Reference -&gt; <a href="https://twitter.com/cabel/status/931292107372838912" target="_blank">https://twitter.com/cabel/status/931292107372838912</a></p>
 
-kubectl exec <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a-pod</span><span class="token punctuation">&gt;</span></span> -c istio-proxy -- curl -v http://B.default.svc.cluster.local/dosomecrazystuff
-
-TLS
-
-kubectl exec <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a-pod</span><span class="token punctuation">&gt;</span></span> -c istio-proxy -- curl https://B.default.svc.cluster.local/dosomecrazystuff --key /etc/certs/key.pem --cert /etc/certs/cert-chain.pem --cacert /etc/certs/root-cert.pem -k
-</code></pre>
                                 
                                 </section>
                             
@@ -977,12 +967,12 @@ kubectl exec <span class="token tag"><span class="token tag"><span class="token 
 
             
                 
-                <a href="manual_istio_cleanup.html" class="navigation navigation-prev " aria-label="Previous page: Manual Istio cleanup">
+                <a href="sshfs_mount.html" class="navigation navigation-prev " aria-label="Previous page: Mount sshfs file system on Mac">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="ibmcloud_force_csi.html" class="navigation navigation-next " aria-label="Next page: Force VPC default storage class off">
+                <a href="cert_extract.html" class="navigation navigation-next " aria-label="Next page: Extract cert from TLS host">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -993,7 +983,7 @@ kubectl exec <span class="token tag"><span class="token tag"><span class="token 
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Debugging Istio sidecars","level":"5.4","depth":1,"next":{"title":"Force VPC default storage class off","level":"6.1","depth":1,"path":"content/ibmcloud_force_csi.md","ref":"content/ibmcloud_force_csi.md","articles":[]},"previous":{"title":"Manual Istio cleanup","level":"5.3","depth":1,"path":"content/manual_istio_cleanup.md","ref":"content/manual_istio_cleanup.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header","livereload"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"livereload":{},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/istio_sidecars.md","mtime":"2020-12-03T19:02:25.621Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-09T15:45:58.730Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Use Touch ID for sudo","level":"8.3","depth":1,"next":{"title":"Extract cert from TLS host","level":"9.1","depth":1,"path":"content/cert_extract.md","ref":"content/cert_extract.md","articles":[]},"previous":{"title":"Mount sshfs file system on Mac","level":"8.2","depth":1,"path":"content/sshfs_mount.md","ref":"content/sshfs_mount.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header","livereload"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"livereload":{},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/sudo_touch.md","mtime":"2020-12-09T15:43:48.853Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-12-09T15:45:58.730Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
