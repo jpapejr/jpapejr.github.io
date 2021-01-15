@@ -34,6 +34,8 @@
   * [Using a PVC for internal image registry](content/ocp_image_registry.md)
   * [Find OAuth endpoint for IBM Cloud OpenShift cluster](content/roks_oauth.md)
   * [Cloud Native Toolkit on CRC](content/cnt_on_crc.md)
+  * [Removing lots of NodeAffinity pods](content/nodeaffinity_pods.md)
+
 
 ## Istio
 
