@@ -2,10 +2,54 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="43600a15-e678-40e1-9a14-8d18dbdb6a5d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/content/ibmcloud_private_catalog_new_offering.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/calico_bird.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/cert_extract.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/cert_validation.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/certbot_dns.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/cnt_on_crc.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/cockpit_fcos.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/cockpit_rhel.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/cos_upload.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/curl_newline.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/gpg_timeout.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/ipfwd_iptables.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/launchpad_dangle.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/minkube_on_centos.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/mutagen_dev.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/ocp_block_storage.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/ocp_image_registry.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/righttime_zsh.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/roks_oauth.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/ssh_tunnels.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/sshfs_mount.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/sudo_touch.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/travis_enterprise.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/content/unix_socket_tcp.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SUMMARY.md" beforeDir="false" afterPath="$PROJECT_DIR$/SUMMARY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/RESOURCES.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/RESOURCES.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/alpine_oc_cli.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/alpine_oc_cli.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/cluster_access_via_sa.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/cluster_access_via_sa.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/extract_tokenid.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/extract_tokenid.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/ibmcloud_managed_istio_update.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/ibmcloud_managed_istio_update.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/iks_fsck.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/iks_fsck.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/iks_kubelet_errors.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/iks_kubelet_errors.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/istio_danglers.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/istio_danglers.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/istio_sidecars.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/istio_sidecars.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/k3s_taint.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/k3s_taint.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/mac_podman.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/mac_podman.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/manual_istio_cleanup.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/manual_istio_cleanup.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/manual_se.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/manual_se.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/ocp_min_clo.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/ocp_min_clo.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/ocp_router_debug.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/ocp_router_debug.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/ocp_templates.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/ocp_templates.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/priv_mk8s.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/priv_mk8s.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/sample_ingress.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/sample_ingress.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/show_all.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/show_all.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/content/svc_proxy.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/content/svc_proxy.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_book/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_book/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_book/search_index.json" beforeDir="false" afterPath="$PROJECT_DIR$/_book/search_index.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/ibmcloud_private_catalog_new_offering.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/ibmcloud_private_catalog_new_offering.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +67,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
@@ -31,7 +76,7 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="RunManager" selected="Shell Script.gitbook serve">
+  <component name="RunManager" selected="Gulp.js.Publish to gh-pages">
     <configuration name="gitbook serve" type="ShConfigurationType">
       <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
       <option name="SCRIPT_PATH" value="/usr/local/bin/gitbook" />
@@ -87,7 +132,11 @@
       <option name="presentableId" value="Default" />
       <updated>1607022148359</updated>
       <workItem from="1607022152336" duration="2447000" />
-      <workItem from="1607464245146" duration="168000" />
+      <workItem from="1607464245146" duration="305000" />
+      <workItem from="1607467025782" duration="6000" />
+      <workItem from="1607526733243" duration="2368000" />
+      <workItem from="1610740766089" duration="72000" />
+      <workItem from="1610740856687" duration="493000" />
     </task>
     <task id="LOCAL-00001" summary="Doing dev in webstorm">
       <created>1607022827309</created>
@@ -103,7 +152,14 @@
       <option name="project" value="LOCAL" />
       <updated>1607026417849</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="New content">
+      <created>1607464479430</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1607464479430</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -124,6 +180,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Doing dev in webstorm" />
     <MESSAGE value="updates" />
-    <option name="LAST_COMMIT_MESSAGE" value="updates" />
+    <MESSAGE value="New content" />
+    <MESSAGE value="Adding some calico updates" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding some calico updates" />
   </component>
 </project>
