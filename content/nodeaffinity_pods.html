@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Manually creating service endpoints · I code and I kube things</title>
+        <title>Removing lots of NodeAffinity pods · I code and I kube things</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -81,10 +81,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="priv_mk8s.html" />
+    <link rel="next" href="istio_danglers.html" />
     
     
-    <link rel="prev" href="iks_kubelet_errors.html" />
+    <link rel="prev" href="cnt_on_crc.html" />
     
 
     </head>
@@ -249,7 +249,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="3.5" data-path="manual_se.html">
+        <li class="chapter " data-level="3.5" data-path="manual_se.html">
             
                 <a href="manual_se.html">
             
@@ -481,7 +481,7 @@
             
         </li>
     
-        <li class="chapter " data-level="4.8" data-path="nodeaffinity_pods.html">
+        <li class="chapter active" data-level="4.8" data-path="nodeaffinity_pods.html">
             
                 <a href="nodeaffinity_pods.html">
             
@@ -950,7 +950,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Manually creating service endpoints</a>
+        <a href=".." >Removing lots of NodeAffinity pods</a>
     </h1>
 </div>
 
@@ -965,30 +965,15 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="creating-manual-service-endpoints">Creating manual service endpoints</h1>
-<p>An example of manually creating endpoints for a service spec. This example allows <code>service B</code> in <code>namespace B</code> to actually have endpoints from other namespaces (i.e. <code>service A</code> in <code>namespace A</code>)</p>
-<pre class="language-"><code>kind: Service
-apiVersion: v1
-metadata:
-  name: serviceB
-  namespace: namespaceB
-spec:
-  ports:
-  - protocol: TCP
-    port: <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>serviceB</span> <span class="token attr-name">port</span><span class="token punctuation">&gt;</span></span>
-    targetPort: <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>serviceA</span> <span class="token attr-name">port</span><span class="token punctuation">&gt;</span></span>
----
-kind: Endpoints
-apiVersion: v1
-metadata:
-  name: serviceB
-  namespace: namespaceB
-subsets:
-  - addresses:
-    - ip: <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>serviceA</span> <span class="token attr-name">clusterIP</span><span class="token punctuation">&gt;</span></span>
-    ports:
-    - port: <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>serviceA</span> <span class="token attr-name">port</span><span class="token punctuation">&gt;</span></span>
+                                <p>Sometimes, when dealing with a cluster that has a lot of node anti-affinity rules, 
+rebooting a worker will cause a large number of pods to be in a <code>NodeAffinity</code> state
+While this doesn&apos;t cause a problem, it can be confusing to see them hanging
+around in the pod listings.. </p>
+<p>This simple one-liner will dump a list of <code>oc delete pod xxxx</code> commands to the terminal
+for you to copy/paste into the command line to delete these dangling pods. </p>
+<pre class="language-"><code class="lang-shell">oc get pods -A <span class="token operator">|</span> <span class="token function">grep</span> NodeAffinity <span class="token operator">|</span> <span class="token function">awk</span> <span class="token string">&apos;/.*/ {print &quot;oc delete pod -n &quot;<span class="token variable">$1</span>,<span class="token variable">$2</span>}&apos;</span>
 </code></pre>
+
                                 
                                 </section>
                             
@@ -1015,12 +1000,12 @@ subsets:
 
             
                 
-                <a href="iks_kubelet_errors.html" class="navigation navigation-prev " aria-label="Previous page: Debugging IKS kubelet errors">
+                <a href="cnt_on_crc.html" class="navigation navigation-prev " aria-label="Previous page: Cloud Native Toolkit on CRC">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="priv_mk8s.html" class="navigation navigation-next " aria-label="Next page: Run privileged deployments on microk8s">
+                <a href="istio_danglers.html" class="navigation navigation-next " aria-label="Next page: Cleaning up dangling webhooks">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -1031,7 +1016,7 @@ subsets:
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Manually creating service endpoints","level":"3.5","depth":1,"next":{"title":"Run privileged deployments on microk8s","level":"3.6","depth":1,"path":"content/priv_mk8s.md","ref":"content/priv_mk8s.md","articles":[]},"previous":{"title":"Debugging IKS kubelet errors","level":"3.4","depth":1,"path":"content/iks_kubelet_errors.md","ref":"content/iks_kubelet_errors.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/manual_se.md","mtime":"2020-12-03T19:02:25.622Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-01-15T21:24:16.186Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Removing lots of NodeAffinity pods","level":"4.8","depth":1,"next":{"title":"Cleaning up dangling webhooks","level":"5.1","depth":1,"path":"content/istio_danglers.md","ref":"content/istio_danglers.md","articles":[]},"previous":{"title":"Cloud Native Toolkit on CRC","level":"4.7","depth":1,"path":"content/cnt_on_crc.md","ref":"content/cnt_on_crc.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/nodeaffinity_pods.md","mtime":"2021-01-15T21:24:04.967Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-01-15T21:24:16.186Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
