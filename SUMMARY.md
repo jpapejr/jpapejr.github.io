@@ -24,6 +24,7 @@
   * [Taint k3s masters for no user workloads](content/k3s_taint.md)
   * [Minikube on CentOS KVM](content/minkube_on_centos.md)
   * [Calico/Bird status commands](content/calico_bird.md)
+  * [Waiting for a resource to be ready](content/wait_ready.md)
 
 ## OpenShift
 
