@@ -36,6 +36,7 @@
   * [Find OAuth endpoint for IBM Cloud OpenShift cluster](content/roks_oauth.md)
   * [Cloud Native Toolkit on CRC](content/cnt_on_crc.md)
   * [Removing lots of NodeAffinity pods](content/nodeaffinity_pods.md)
+  * [Configure a proxy on an OpenShift on IBM Cloud cluster](content/roks_proxy.md)
 
 
 ## Istio
