@@ -30,7 +30,7 @@ Use the following command to grant the new ServiceAccount the `privileged` Secur
 
 ``` shell
 oc project default
-oc adm poliicy add-scc-to-user privileged -z crio-updater-ds
+oc adm policy add-scc-to-user privileged -z crio-updater-ds
 ```
 
 ### Step 4 - Update the DaemonSet YAML

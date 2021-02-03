@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Use Touch ID for sudo · I code and I kube things</title>
+        <title>Configure a proxy on an OpenShift on IBM Cloud cluster · I code and I kube things</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -81,10 +81,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="cert_extract.html" />
+    <link rel="next" href="istio_danglers.html" />
     
     
-    <link rel="prev" href="sshfs_mount.html" />
+    <link rel="prev" href="nodeaffinity_pods.html" />
     
 
     </head>
@@ -511,7 +511,7 @@
             
         </li>
     
-        <li class="chapter " data-level="4.9" data-path="roks_proxy.html">
+        <li class="chapter active" data-level="4.9" data-path="roks_proxy.html">
             
                 <a href="roks_proxy.html">
             
@@ -794,7 +794,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="8.3" data-path="sudo_touch.html">
+        <li class="chapter " data-level="8.3" data-path="sudo_touch.html">
             
                 <a href="sudo_touch.html">
             
@@ -980,7 +980,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Use Touch ID for sudo</a>
+        <a href=".." >Configure a proxy on an OpenShift on IBM Cloud cluster</a>
     </h1>
 </div>
 
@@ -995,11 +995,98 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <p>With some minor modifications, you can tell your Mac to use TouchID as a form of authentication for <code>sudo</code>.</p>
-<p>If you edit <code>/etc/pam.d/sudo</code> and add the following line to the top:</p>
-<pre class="language-"><code>auth sufficient pam_tid.so
-</code></pre><p>You can now use your fingerprint to <code>sudo</code>!</p>
-<p>Reference -&gt; <a href="https://twitter.com/cabel/status/931292107372838912" target="_blank">https://twitter.com/cabel/status/931292107372838912</a></p>
+                                <p>OpenShift clusters on IBM Cloud (ROKS) cluster are different that UPI/IPI installed OCP installs in that they do not support
+the modification of some cluster global settings. Specifically, there are settings that the MachineConfig Operator deployment would
+read and translate into host-level configuration on the workers. One example of this is configuring an HTTP(s) proxy for the cluster. </p>
+<p>Consider this, you have a VPC on IBM Cloud with no public gateways connected to your on-premises network via DirectLink. Thus your private-only ROKS cluster has no path out to the internet to pull container images from except that which you provide via your corporate proxy server. Additionally, cluster operators like the marketplace and samples operator (which populate the OperatorHub and Developer Catalog contents)
+need to be able to reach the internet to obtain content as well. Using the steps below, we can configure the proxy for use on all the
+worker hosts and for the cluster operators that require it. </p>
+<h3 id="step-1---configure-the-cluster-wide-proxy-settings">Step 1 - Configure the cluster-wide proxy settings</h3>
+<p>To accomplish this, follow <a href="https://docs.openshift.com/container-platform/4.5/networking/enable-cluster-wide-proxy.html#nw-proxy-configure-object_config-cluster-wide-proxy" target="_blank">this document</a> to configure the <code>proxy.config.openshift.io/cluster</code> resource in the cluster. </p>
+<p>After this, you can restart the operators in the <code>openshift-marketplace</code> and <code>openshift-cluster-samples-operator</code> projects and those 
+workloads should be able to access their respective content from operatorhub.io and quay.io. </p>
+<h3 id="step-2---create-a-serviceaccount">Step 2 - Create a ServiceAccount</h3>
+<p>In the default namespace, create a new ServiceAccount:</p>
+<pre class="language-"><code class="lang-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> ServiceAccount
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> crio<span class="token punctuation">-</span>updater<span class="token punctuation">-</span>ds
+</code></pre>
+<h3 id="step-3---provide-this-new-serviceaccount-with-privileged-access">Step 3 - Provide this new ServiceAccount with <code>privileged</code> access</h3>
+<p>Use the following command to grant the new ServiceAccount the <code>privileged</code> SecurityContextConstraint (SCC)</p>
+<pre class="language-"><code class="lang-shell">oc project default
+oc adm poliicy add-scc-to-user privileged -z crio-updater-ds
+</code></pre>
+<h3 id="step-4---update-the-daemonset-yaml">Step 4 - Update the DaemonSet YAML</h3>
+<p>Taking the following example, update the following: </p>
+<ul>
+<li>Replace the last three CIDR ranges (I.e. <code>10.241.128.0/24</code>, <code>10.241.64.0/24</code>, <code>10.241.0.0/24</code>) in the <code>NO_PROXY</code> field with the CIDR ranges for your VPC subnets. </li>
+<li>Replace the <code>host:port</code> values in the <code>HTTP_PROXY</code> and <code>HTTPS_PROXY</code> fields with your proxy&apos;s host and port values.</li>
+</ul>
+<blockquote>
+<p>Note: The container image for this DaemonSet is taken from the <code>icr.io</code> registry. This was done because even a private-only ROKS cluster
+will be able to access the IBM Cloud Container Registry (icr.io) via private service endpoints. If this is not the case in your environment, you&apos;ll need to use a container image that <strong>can</strong> be reached from the cluster <strong>without</strong> requiring access via the proxy.</p>
+</blockquote>
+<pre class="language-"><code class="lang-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> apps/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> DaemonSet
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> add<span class="token punctuation">-</span>proxy<span class="token punctuation">-</span>to<span class="token punctuation">-</span>crio
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> default
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
+      <span class="token key atrule">name</span><span class="token punctuation">:</span> add<span class="token punctuation">-</span>proxy<span class="token punctuation">-</span>to<span class="token punctuation">-</span>crio
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+      <span class="token key atrule">name</span><span class="token punctuation">:</span> add<span class="token punctuation">-</span>proxy<span class="token punctuation">-</span>to<span class="token punctuation">-</span>crio
+      <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+        <span class="token key atrule">name</span><span class="token punctuation">:</span> add<span class="token punctuation">-</span>proxy<span class="token punctuation">-</span>to<span class="token punctuation">-</span>crio
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">serviceAccountName</span><span class="token punctuation">:</span> crio<span class="token punctuation">-</span>updater<span class="token punctuation">-</span>ds
+      <span class="token key atrule">hostIPC</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> add<span class="token punctuation">-</span>proxy<span class="token punctuation">-</span>to<span class="token punctuation">-</span>crio
+          <span class="token key atrule">image</span><span class="token punctuation">:</span> icr.io/ibm/ibmcloud<span class="token punctuation">-</span>backup<span class="token punctuation">-</span>restore<span class="token punctuation">:</span>latest
+          <span class="token key atrule">imagePullPolicy</span><span class="token punctuation">:</span> Always
+          <span class="token key atrule">command</span><span class="token punctuation">:</span> <span class="token punctuation">[</span> <span class="token string">&quot;/bin/sh&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;-c&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;+m&quot;</span> <span class="token punctuation">]</span>
+          <span class="token key atrule">args</span><span class="token punctuation">:</span>
+          <span class="token punctuation">-</span> <span class="token punctuation">&gt;</span><span class="token scalar string">
+              set -m;</span>
+
+              chroot /host echo
+              NO_PROXY=&quot;localhost<span class="token punctuation">,</span>127.0.0.1<span class="token punctuation">,</span>172.20.0.1<span class="token punctuation">,</span>172.21.0.0/16<span class="token punctuation">,</span>172.17.0.0/18<span class="token punctuation">,</span>161.26.0.0/16<span class="token punctuation">,</span>166.8.0.0/14<span class="token punctuation">,</span>172.20.0.0/16<span class="token punctuation">,</span>10.241.128.0/24<span class="token punctuation">,</span>10.241.64.0/24<span class="token punctuation">,</span>10.241.0.0/24&quot; 
+              <span class="token punctuation">&gt;</span> /host/etc/sysconfig/crio<span class="token punctuation">-</span>network;
+
+              chroot /host echo HTTP_PROXY=&quot;http<span class="token punctuation">:</span>//10.241.0.11<span class="token punctuation">:</span>3128/&quot; <span class="token punctuation">&gt;</span><span class="token punctuation">&gt;</span> /host/etc/sysconfig/crio<span class="token punctuation">-</span>network;
+
+              chroot /host echo HTTPS_PROXY=&quot;http<span class="token punctuation">:</span>//10.241.0.11<span class="token punctuation">:</span>3128/&quot; <span class="token punctuation">&gt;</span><span class="token punctuation">&gt;</span> /host/etc/sysconfig/crio<span class="token punctuation">-</span>network;
+
+              chroot /host systemctl restart crio; 
+
+              sleep 365d;
+
+          <span class="token key atrule">volumeMounts</span><span class="token punctuation">:</span>
+          <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> host
+            <span class="token key atrule">mountPath</span><span class="token punctuation">:</span> /host
+          <span class="token key atrule">securityContext</span><span class="token punctuation">:</span>
+            <span class="token key atrule">privileged</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+            <span class="token key atrule">runAsUser</span><span class="token punctuation">:</span> <span class="token number">0</span>
+            <span class="token key atrule">capabilities</span><span class="token punctuation">:</span>
+              <span class="token key atrule">add</span><span class="token punctuation">:</span>
+              <span class="token punctuation">-</span> SYS_ADMIN
+              <span class="token punctuation">-</span> SYS_CHROOT
+      <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> host
+        <span class="token key atrule">hostPath</span><span class="token punctuation">:</span>
+          <span class="token key atrule">path</span><span class="token punctuation">:</span> /
+          <span class="token key atrule">type</span><span class="token punctuation">:</span> Directory
+</code></pre>
+<h3 id="step-5---apply-the-daemonset-yaml">Step 5 - Apply the DaemonSet YAML</h3>
+<p>Either run </p>
+<pre class="language-"><code class="lang-shell">oc apply -f <span class="token operator">&lt;</span>filename<span class="token operator">&gt;</span>
+</code></pre>
+<p>with the content from step 4 or simply access the <code>default</code> project from the OpenShift console and click the <code>Import YAML</code> button (I.e. plus icon in the top masthead of the console) and paste in the content from step 4. </p>
+<p>After a few moments, the daemonset pods should start and report as <code>Running</code>. A few moments longer (after the CRI-O systemd unit restarts), you should be able to pull images requiring access via the proxy. </p>
 
                                 
                                 </section>
@@ -1027,12 +1114,12 @@
 
             
                 
-                <a href="sshfs_mount.html" class="navigation navigation-prev " aria-label="Previous page: Mount sshfs file system on Mac">
+                <a href="nodeaffinity_pods.html" class="navigation navigation-prev " aria-label="Previous page: Removing lots of NodeAffinity pods">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="cert_extract.html" class="navigation navigation-next " aria-label="Next page: Extract cert from TLS host">
+                <a href="istio_danglers.html" class="navigation navigation-next " aria-label="Next page: Cleaning up dangling webhooks">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -1043,7 +1130,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Use Touch ID for sudo","level":"8.3","depth":1,"next":{"title":"Extract cert from TLS host","level":"9.1","depth":1,"path":"content/cert_extract.md","ref":"content/cert_extract.md","articles":[]},"previous":{"title":"Mount sshfs file system on Mac","level":"8.2","depth":1,"path":"content/sshfs_mount.md","ref":"content/sshfs_mount.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header","livereload"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"livereload":{},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/sudo_touch.md","mtime":"2020-12-09T15:43:48.853Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-02-02T20:17:28.439Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Configure a proxy on an OpenShift on IBM Cloud cluster","level":"4.9","depth":1,"next":{"title":"Cleaning up dangling webhooks","level":"5.1","depth":1,"path":"content/istio_danglers.md","ref":"content/istio_danglers.md","articles":[]},"previous":{"title":"Removing lots of NodeAffinity pods","level":"4.8","depth":1,"path":"content/nodeaffinity_pods.md","ref":"content/nodeaffinity_pods.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header","livereload"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"livereload":{},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/roks_proxy.md","mtime":"2021-02-02T20:17:18.468Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-02-02T20:17:28.439Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

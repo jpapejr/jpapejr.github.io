@@ -81,7 +81,7 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="istio_danglers.html" />
+    <link rel="next" href="roks_proxy.html" />
     
     
     <link rel="prev" href="cnt_on_crc.html" />
@@ -504,6 +504,21 @@
                         <b>4.8.</b>
                     
                     Removing lots of NodeAffinity pods
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9" data-path="roks_proxy.html">
+            
+                <a href="roks_proxy.html">
+            
+                    
+                        <b>4.9.</b>
+                    
+                    Configure a proxy on an OpenShift on IBM Cloud cluster
             
                 </a>
             
@@ -1020,7 +1035,7 @@ for you to copy/paste into the command line to delete these dangling pods. </p>
                 </a>
                 
                 
-                <a href="istio_danglers.html" class="navigation navigation-next " aria-label="Next page: Cleaning up dangling webhooks">
+                <a href="roks_proxy.html" class="navigation navigation-next " aria-label="Next page: Configure a proxy on an OpenShift on IBM Cloud cluster">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -1031,7 +1046,7 @@ for you to copy/paste into the command line to delete these dangling pods. </p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Removing lots of NodeAffinity pods","level":"4.8","depth":1,"next":{"title":"Cleaning up dangling webhooks","level":"5.1","depth":1,"path":"content/istio_danglers.md","ref":"content/istio_danglers.md","articles":[]},"previous":{"title":"Cloud Native Toolkit on CRC","level":"4.7","depth":1,"path":"content/cnt_on_crc.md","ref":"content/cnt_on_crc.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/nodeaffinity_pods.md","mtime":"2021-01-15T21:24:04.967Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-01-20T14:50:34.105Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Removing lots of NodeAffinity pods","level":"4.8","depth":1,"next":{"title":"Configure a proxy on an OpenShift on IBM Cloud cluster","level":"4.9","depth":1,"path":"content/roks_proxy.md","ref":"content/roks_proxy.md","articles":[]},"previous":{"title":"Cloud Native Toolkit on CRC","level":"4.7","depth":1,"path":"content/cnt_on_crc.md","ref":"content/cnt_on_crc.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header","livereload"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"livereload":{},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/nodeaffinity_pods.md","mtime":"2021-01-15T21:24:04.967Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-02-02T20:17:28.439Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -1074,6 +1089,10 @@ for you to copy/paste into the command line to delete these dangling pods. </p>
     
         
         <script src="../gitbook/gitbook-plugin-web-header/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
         
     
         
