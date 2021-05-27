@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "This book is a collection of topics related to containers, Kubernetes, OpenShift, IBM Cloud, and other surrounding technologies of interest I've accumulated over time.",
   "main": "gulpfile.js",
-  "dependencies": {},
   "devDependencies": {
     "gulp": "^4.0.2",
     "gulp-gh-pages": "^0.5.4",
@@ -21,5 +20,14 @@
   "bugs": {
     "url": "https://github.com/jpapejr/jpapejr.github.io/issues"
   },
-  "homepage": "https://github.com/jpapejr/jpapejr.github.io#readme"
+  "homepage": "https://github.com/jpapejr/jpapejr.github.io#readme",
+  "dependencies": {
+    "gitbook-plugin-back-to-top-button": "^0.1.4",
+    "gitbook-plugin-collapsible-chapters": "^0.1.8",
+    "gitbook-plugin-copy-code-button": "^0.0.2",
+    "gitbook-plugin-fancybox": "^3.0.1",
+    "gitbook-plugin-hints": "^1.0.2",
+    "gitbook-plugin-prism": "^2.4.0",
+    "gitbook-plugin-web-header": "^1.1.3"
+  }
 }

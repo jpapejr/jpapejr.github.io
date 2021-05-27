@@ -1005,88 +1005,36 @@ worker hosts and for the cluster operators that require it. </p>
 <p>To accomplish this, follow <a href="https://docs.openshift.com/container-platform/4.5/networking/enable-cluster-wide-proxy.html#nw-proxy-configure-object_config-cluster-wide-proxy" target="_blank">this document</a> to configure the <code>proxy.config.openshift.io/cluster</code> resource in the cluster. </p>
 <p>After this, you can restart the operators in the <code>openshift-marketplace</code> and <code>openshift-cluster-samples-operator</code> projects and those 
 workloads should be able to access their respective content from operatorhub.io and quay.io. </p>
-<h3 id="step-2---create-a-serviceaccount">Step 2 - Create a ServiceAccount</h3>
-<p>In the default namespace, create a new ServiceAccount:</p>
-<pre class="language-"><code class="lang-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
-<span class="token key atrule">kind</span><span class="token punctuation">:</span> ServiceAccount
-<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
-  <span class="token key atrule">name</span><span class="token punctuation">:</span> crio<span class="token punctuation">-</span>updater<span class="token punctuation">-</span>ds
-</code></pre>
-<h3 id="step-3---provide-this-new-serviceaccount-with-privileged-access">Step 3 - Provide this new ServiceAccount with <code>privileged</code> access</h3>
-<p>Use the following command to grant the new ServiceAccount the <code>privileged</code> SecurityContextConstraint (SCC)</p>
-<pre class="language-"><code class="lang-shell">oc project default
-oc adm policy add-scc-to-user privileged -z crio-updater-ds
-</code></pre>
-<h3 id="step-4---update-the-daemonset-yaml">Step 4 - Update the DaemonSet YAML</h3>
-<p>Taking the following example, update the following: </p>
+<h3 id="step-2---the-script">Step 2 - The script</h3>
+<p>Taking the following example, create a new file with the contents below (I.e. create <code>proxify.sh</code>) and ensure it&apos;s executable (I.e. <code>chmod +x ./proxify.sh</code>): </p>
 <ul>
-<li>Replace the last three CIDR ranges (I.e. <code>10.241.128.0/24</code>, <code>10.241.64.0/24</code>, <code>10.241.0.0/24</code>) in the <code>NO_PROXY</code> field with the CIDR ranges for your VPC subnets. </li>
+<li>Replace the last three CIDR ranges (I.e. <code>10.241.128.0/24</code>, <code>10.241.64.0/24</code>, <code>10.241.0.0/24</code>) in the <code>NO_PROXY</code> field with the CIDR ranges for your VPC subnets. Add more to the end if you have more than 3 subnets in your VPC architecture.</li>
 <li>Replace the <code>host:port</code> values in the <code>HTTP_PROXY</code> and <code>HTTPS_PROXY</code> fields with your proxy&apos;s host and port values.</li>
 </ul>
-<blockquote>
-<p>Note: The container image for this DaemonSet is taken from the <code>icr.io</code> registry. This was done because even a private-only ROKS cluster
-will be able to access the IBM Cloud Container Registry (icr.io) via private service endpoints. If this is not the case in your environment, you&apos;ll need to use a container image that <strong>can</strong> be reached from the cluster <strong>without</strong> requiring access via the proxy.</p>
-</blockquote>
-<pre class="language-"><code class="lang-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> apps/v1
-<span class="token key atrule">kind</span><span class="token punctuation">:</span> DaemonSet
-<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
-  <span class="token key atrule">name</span><span class="token punctuation">:</span> add<span class="token punctuation">-</span>proxy<span class="token punctuation">-</span>to<span class="token punctuation">-</span>crio
-  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> default
-<span class="token key atrule">spec</span><span class="token punctuation">:</span>
-  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
-    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
-      <span class="token key atrule">name</span><span class="token punctuation">:</span> add<span class="token punctuation">-</span>proxy<span class="token punctuation">-</span>to<span class="token punctuation">-</span>crio
-  <span class="token key atrule">template</span><span class="token punctuation">:</span>
-    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
-      <span class="token key atrule">name</span><span class="token punctuation">:</span> add<span class="token punctuation">-</span>proxy<span class="token punctuation">-</span>to<span class="token punctuation">-</span>crio
-      <span class="token key atrule">labels</span><span class="token punctuation">:</span>
-        <span class="token key atrule">name</span><span class="token punctuation">:</span> add<span class="token punctuation">-</span>proxy<span class="token punctuation">-</span>to<span class="token punctuation">-</span>crio
-    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
-      <span class="token key atrule">serviceAccountName</span><span class="token punctuation">:</span> crio<span class="token punctuation">-</span>updater<span class="token punctuation">-</span>ds
-      <span class="token key atrule">hostIPC</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
-      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
-        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> add<span class="token punctuation">-</span>proxy<span class="token punctuation">-</span>to<span class="token punctuation">-</span>crio
-          <span class="token key atrule">image</span><span class="token punctuation">:</span> icr.io/ibm/ibmcloud<span class="token punctuation">-</span>backup<span class="token punctuation">-</span>restore<span class="token punctuation">:</span>latest
-          <span class="token key atrule">imagePullPolicy</span><span class="token punctuation">:</span> Always
-          <span class="token key atrule">command</span><span class="token punctuation">:</span> <span class="token punctuation">[</span> <span class="token string">&quot;/bin/sh&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;-c&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;+m&quot;</span> <span class="token punctuation">]</span>
-          <span class="token key atrule">args</span><span class="token punctuation">:</span>
-          <span class="token punctuation">-</span> <span class="token punctuation">&gt;</span><span class="token scalar string">
-              set -m;</span>
-
-              chroot /host echo
-              NO_PROXY=&quot;localhost<span class="token punctuation">,</span>127.0.0.1<span class="token punctuation">,</span>172.20.0.1<span class="token punctuation">,</span>172.21.0.0/16<span class="token punctuation">,</span>172.17.0.0/18<span class="token punctuation">,</span>161.26.0.0/16<span class="token punctuation">,</span>166.8.0.0/14<span class="token punctuation">,</span>172.20.0.0/16<span class="token punctuation">,</span>10.241.128.0/24<span class="token punctuation">,</span>10.241.64.0/24<span class="token punctuation">,</span>10.241.0.0/24&quot; 
-              <span class="token punctuation">&gt;</span> /host/etc/sysconfig/crio<span class="token punctuation">-</span>network;
-
-              chroot /host echo HTTP_PROXY=&quot;http<span class="token punctuation">:</span>//10.241.0.11<span class="token punctuation">:</span>3128/&quot; <span class="token punctuation">&gt;</span><span class="token punctuation">&gt;</span> /host/etc/sysconfig/crio<span class="token punctuation">-</span>network;
-
-              chroot /host echo HTTPS_PROXY=&quot;http<span class="token punctuation">:</span>//10.241.0.11<span class="token punctuation">:</span>3128/&quot; <span class="token punctuation">&gt;</span><span class="token punctuation">&gt;</span> /host/etc/sysconfig/crio<span class="token punctuation">-</span>network;
-
-              chroot /host systemctl restart crio; 
-
-              sleep 365d;
-
-          <span class="token key atrule">volumeMounts</span><span class="token punctuation">:</span>
-          <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> host
-            <span class="token key atrule">mountPath</span><span class="token punctuation">:</span> /host
-          <span class="token key atrule">securityContext</span><span class="token punctuation">:</span>
-            <span class="token key atrule">privileged</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
-            <span class="token key atrule">runAsUser</span><span class="token punctuation">:</span> <span class="token number">0</span>
-            <span class="token key atrule">capabilities</span><span class="token punctuation">:</span>
-              <span class="token key atrule">add</span><span class="token punctuation">:</span>
-              <span class="token punctuation">-</span> SYS_ADMIN
-              <span class="token punctuation">-</span> SYS_CHROOT
-      <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
-      <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> host
-        <span class="token key atrule">hostPath</span><span class="token punctuation">:</span>
-          <span class="token key atrule">path</span><span class="token punctuation">:</span> /
-          <span class="token key atrule">type</span><span class="token punctuation">:</span> Directory
+<pre class="language-"><code class="lang-bash"><span class="token builtin class-name">set</span> -o xtrace
+<span class="token comment">#!/bin/sh</span>
+<span class="token assign-left variable">CLUSTER</span><span class="token operator">=</span><span class="token variable">$1</span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">NODE</span> <span class="token keyword">in</span> <span class="token variable"><span class="token variable">`</span>oc get no -oname<span class="token variable">`</span></span><span class="token punctuation">;</span> <span class="token keyword">do</span>
+    <span class="token builtin class-name">echo</span> <span class="token variable">$NODE</span>
+    oc debug <span class="token variable">$NODE</span> -- /bin/sh -c <span class="token string">&apos;echo NO_PROXY=&quot;localhost,127.0.0.1,172.20.0.1,172.21.0.0/16,172.17.0.0/18,161.26.0.0/16,166.8.0.0/14,172.20.0.0/16,10.241.128.0/24,10.241.64.0/24,10.241.0.0/24&quot;  &gt; /host/etc/sysconfig/crio-network;&apos;</span>
+    oc debug <span class="token variable">$NODE</span> -- /bin/sh -c <span class="token string">&apos;echo HTTP_PROXY=&quot;http://10.241.0.11:3128/&quot; &gt;&gt; /host/etc/sysconfig/crio-network;&apos;</span>
+    oc debug <span class="token variable">$NODE</span> -- /bin/sh -c <span class="token string">&apos;echo HTTPS_PROXY=&quot;http://10.241.0.11:3128/&quot; &gt;&gt; /host/etc/sysconfig/crio-network;&apos;</span>
+    oc debug <span class="token variable">$NODE</span> -- /bin/sh -c <span class="token string">&apos;cat /host/etc/sysconfig/crio-network;&apos;</span>
+    oc label <span class="token variable">$NODE</span> crio-proxified<span class="token operator">=</span>true<span class="token punctuation">;</span> 
+<span class="token keyword">done</span>
+<span class="token builtin class-name">read</span> -p <span class="token string">&quot;Press enter to continue with rolling reboot of workers (15m interval between reboots), or Ctrl-C to exit and manual reboot workers...&quot;</span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">WORKER</span> <span class="token keyword">in</span> <span class="token variable"><span class="token variable">`</span> ibmcloud cs worker <span class="token function">ls</span> --cluster $CLUSTER <span class="token operator">|</span> <span class="token function">grep</span> kube <span class="token operator">|</span> <span class="token function">cut</span> -d<span class="token string">&apos; &apos;</span> -f1<span class="token variable">`</span></span><span class="token punctuation">;</span> <span class="token keyword">do</span>
+    <span class="token builtin class-name">echo</span> <span class="token variable">$WORKER</span>
+    ibmcloud cs worker <span class="token function">reboot</span> -f --skip-master-health --worker <span class="token variable">$WORKER</span> --cluster <span class="token variable">$CLUSTER</span><span class="token punctuation">;</span>
+    <span class="token function">sleep</span> 15m<span class="token punctuation">;</span>
+<span class="token keyword">done</span>
+<span class="token builtin class-name">echo</span> <span class="token string">&quot;Proxified nodes:&quot;</span>
+oc get nodes -l crio-proxified<span class="token operator">=</span>true
 </code></pre>
-<h3 id="step-5---apply-the-daemonset-yaml">Step 5 - Apply the DaemonSet YAML</h3>
-<p>Either run </p>
-<pre class="language-"><code class="lang-shell">oc apply -f <span class="token operator">&lt;</span>filename<span class="token operator">&gt;</span>
-</code></pre>
-<p>with the content from step 4 or simply access the <code>default</code> project from the OpenShift console and click the <code>Import YAML</code> button (I.e. plus icon in the top masthead of the console) and paste in the content from step 4. </p>
-<p>After a few moments, the daemonset pods should start and report as <code>Running</code>. A few moments longer (after the CRI-O systemd unit restarts), you should be able to pull images requiring access via the proxy. </p>
+<h3 id="step-3---run-the-script">Step 3 - Run the script</h3>
+<p>To run the script, simply supply the cluster ID or name (e.g. <code>./proxify.sh my-cool-cluster</code>)</p>
+<p>The script will connect to each worker node via a debug pod and inject the updated configuration into the <code>/etc/sysconfig/crio-network</code> file. A label of <code>crio-proxified: true</code> will also be attached to each worker the script updated. After the updates are completed, the script will pause and ask you if you&apos;d like restart all of the workers, in turn, with a 15 minute interval between each restart. If you don&apos;t want to do this, simply hit Ctrl-C and abort the script at that time. Then manually restart your workers in the desired way until all updated workers have been restarted. </p>
+<p>Now the workers should have a path to the public network via your proxy host. </p>
 
                                 
                                 </section>
@@ -1130,7 +1078,7 @@ will be able to access the IBM Cloud Container Registry (icr.io) via private ser
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Configure a proxy on an OpenShift on IBM Cloud cluster","level":"4.9","depth":1,"next":{"title":"Cleaning up dangling webhooks","level":"5.1","depth":1,"path":"content/istio_danglers.md","ref":"content/istio_danglers.md","articles":[]},"previous":{"title":"Removing lots of NodeAffinity pods","level":"4.8","depth":1,"path":"content/nodeaffinity_pods.md","ref":"content/nodeaffinity_pods.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header","livereload"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"livereload":{},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/roks_proxy.md","mtime":"2021-02-03T15:32:30.354Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-02-03T15:34:52.236Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Configure a proxy on an OpenShift on IBM Cloud cluster","level":"4.9","depth":1,"next":{"title":"Cleaning up dangling webhooks","level":"5.1","depth":1,"path":"content/istio_danglers.md","ref":"content/istio_danglers.md","articles":[]},"previous":{"title":"Removing lots of NodeAffinity pods","level":"4.8","depth":1,"path":"content/nodeaffinity_pods.md","ref":"content/nodeaffinity_pods.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism","-highlight","collapsible-chapters","hints","copy-code-button","back-to-top-button","fancybox","web-header","livereload"],"root":"/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"webheader":{"headerTitle":"I code and I kube things"},"prism":{"css":["prismjs/themes/prism-tomorrow.css"]},"fancybox":{"helpers":{"buttons":{}},"openEffect":"elastic","closeEffect":"elastic"},"livereload":{},"web-header":{},"search":{},"collapsible-chapters":{},"hints":{"info":"fa fa-info-circle","tip":"fa fa-mortar-board","danger":"fa fa-exclamation-circle","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"back-to-top-button":{},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":true}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"I code and I kube things","gitbook":"3.2.3"},"file":{"path":"content/roks_proxy.md","mtime":"2021-05-27T20:02:02.770Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-05-27T20:41:12.688Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
